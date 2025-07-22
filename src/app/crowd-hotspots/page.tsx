@@ -85,7 +85,7 @@ export default function CrowdHotspotsPage() {
               </SheetContent>
             </Sheet>
             <div className="relative ml-auto flex-1 md:grow-0">
-                <h1 className="text-xl font-semibold">Crowd Hotspot Analysis</h1>
+                <h1 className="text-xl font-semibold">Crowd Concentration Heatmap</h1>
             </div>
             <UserNav />
         </header>
