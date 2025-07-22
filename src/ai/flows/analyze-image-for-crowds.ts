@@ -55,6 +55,10 @@ const analyzeImageForCrowdsFlow = ai.defineFlow(
       },
     });
 
+    if (!media) {
+      throw new Error('The AI model did not return an image.');
+    }
+
     return {
       heatmapOverlayDataUri: media.url,
     };
