@@ -8,6 +8,7 @@ import {
   Users,
   PanelLeft,
   Search,
+  ImageIcon,
 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
@@ -53,7 +54,7 @@ export default function Dashboard() {
           </Link>
           <div className="flex flex-col gap-y-2">
             <Link
-              href="#"
+              href="/"
               className="flex items-center gap-3 rounded-lg bg-accent px-3 py-2 text-accent-foreground transition-all hover:text-foreground"
             >
               <Home className="h-4 w-4" />
@@ -65,6 +66,13 @@ export default function Dashboard() {
             >
               <LineChart className="h-4 w-4" />
               Analytics
+            </Link>
+            <Link
+              href="/crowd-hotspots"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+            >
+              <ImageIcon className="h-4 w-4" />
+              Crowd Hotspots
             </Link>
           </div>
         </nav>
@@ -97,7 +105,7 @@ export default function Dashboard() {
                   <span className="sr-only">Drishti AI</span>
                 </Link>
                 <Link
-                  href="#"
+                  href="/"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <Home className="h-5 w-5" />
@@ -109,6 +117,13 @@ export default function Dashboard() {
                 >
                   <LineChart className="h-5 w-5" />
                   Analytics
+                </Link>
+                 <Link
+                  href="/crowd-hotspots"
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <ImageIcon className="h-5 w-5" />
+                  Crowd Hotspots
                 </Link>
                 <Link
                   href="#"
