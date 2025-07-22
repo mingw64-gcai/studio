@@ -37,32 +37,26 @@ export async function analyzeImageForCrowds(
   return analyzeImageForCrowdsFlow(input);
 }
 
-
-const prompt = ai.definePrompt({
-  name: 'analyzeImageForCrowdsPrompt',
-  input: { schema: AnalyzeImageForCrowdsInputSchema },
-  output: { schema: AnalyzeImageForCrowdsOutputSchema },
-  prompt: `You are an AI expert in analyzing images to detect crowd density.
-  Based on the provided image, generate a heatmap overlay that highlights areas with a high concentration of people.
-  The heatmap should be red in the most dense areas, and fade to transparent in less dense areas.
-
-  Image for analysis: {{media url=imageDataUri}}
-
-  Return the heatmap overlay as a data URI.
-  `,
-});
-
-
 const analyzeImageForCrowdsFlow = ai.defineFlow(
   {
     name: 'analyzeImageForCrowdsFlow',
     inputSchema: AnalyzeImageForCrowdsInputSchema,
     outputSchema: AnalyzeImageForCrowdsOutputSchema,
   },
-  async input => {
-    // In a real scenario, you might have more complex logic here.
-    // For this example, we directly call the prompt.
-    const { output } = await prompt(input);
-    return output!;
+  async ({imageDataUri}) => {
+    const {media} = await ai.generate({
+      model: 'googleai/gemini-2.0-flash-preview-image-generation',
+      prompt: [
+        {media: {url: imageDataUri}},
+        {text: 'Generate a heatmap overlay identifying areas of high crowd density. The heatmap should be red in the most dense areas, and fade to transparent in less dense areas.'},
+      ],
+      config: {
+        responseModalities: ['TEXT', 'IMAGE'],
+      },
+    });
+
+    return {
+      heatmapOverlayDataUri: media.url,
+    };
   }
 );
