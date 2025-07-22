@@ -50,9 +50,9 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
       <nav className="grid gap-6 text-lg font-medium">
         <Link
           href="#"
-          className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+          className="group flex h-12 w-12 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
         >
-          <Icons.logo className="h-5 w-5 transition-all group-hover:scale-110" />
+          <Icons.logo className="h-6 w-6 transition-all group-hover:scale-110" />
           <span className="sr-only">Drishti AI</span>
         </Link>
         {navLinks.map(renderLink)}
@@ -65,9 +65,9 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
       <nav className="flex flex-col gap-4 px-4 sm:py-5">
         <Link
           href="#"
-          className="group flex h-9 shrink-0 items-center gap-2 rounded-full bg-primary px-3 text-lg font-semibold text-primary-foreground md:h-8 md:text-base"
+          className="group flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-4 text-xl font-semibold text-primary-foreground md:h-10 md:text-lg"
         >
-          <Icons.logo className="h-5 w-5 transition-all group-hover:scale-110" />
+          <Icons.logo className="h-6 w-6 transition-all group-hover:scale-110" />
           <span className="font-semibold">Drishti AI</span>
         </Link>
         <div className="flex flex-col gap-y-2">
