@@ -7,9 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles } from 'lucide-react';
+import { Upload, Loader2, Sparkles, PanelLeft } from 'lucide-react';
 import { analyzeImageForCrowds } from '@/ai/flows/analyze-image-for-crowds';
 import { UserNav } from '@/components/user-nav';
+import { Sidebar } from '@/components/sidebar';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
 export default function CrowdHotspotsPage() {
   const { toast } = useToast();
@@ -68,8 +70,20 @@ export default function CrowdHotspotsPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        {/* Note: This is a simplified header. You might want to use your main layout component. */}
+        <Sidebar />
+        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-60">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button size="icon" variant="outline" className="sm:hidden">
+                  <PanelLeft className="h-5 w-5" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="sm:max-w-xs">
+                <Sidebar isSheet={true} />
+              </SheetContent>
+            </Sheet>
             <div className="relative ml-auto flex-1 md:grow-0">
                 <h1 className="text-xl font-semibold">Crowd Hotspot Analysis</h1>
             </div>
@@ -145,6 +159,7 @@ export default function CrowdHotspotsPage() {
                 </Card>
             </div>
         </main>
+        </div>
     </div>
   );
 }
