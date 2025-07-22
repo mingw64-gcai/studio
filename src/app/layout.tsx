@@ -3,7 +3,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: "CrowdGuardian",
+  title: "Drishti AI",
   description: "AI-powered crowd detection and monitoring.",
 };
 

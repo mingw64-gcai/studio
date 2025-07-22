@@ -49,7 +49,7 @@ export default function Dashboard() {
             className="group flex h-9 shrink-0 items-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:text-base"
           >
             <Icons.logo className="h-5 w-5 transition-all group-hover:scale-110" />
-            <span className="font-semibold">CrowdGuardian</span>
+            <span className="font-semibold">Drishti AI</span>
           </Link>
           <div className="flex flex-col gap-y-2">
             <Link
@@ -94,7 +94,7 @@ export default function Dashboard() {
                   className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
                 >
                   <Icons.logo className="h-5 w-5 transition-all group-hover:scale-110" />
-                  <span className="sr-only">CrowdGuardian</span>
+                  <span className="sr-only">Drishti AI</span>
                 </Link>
                 <Link
                   href="#"
