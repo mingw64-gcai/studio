@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, LineChart, ImageIcon, Users, Map } from 'lucide-react'
+import { Home, LineChart, ImageIcon, Map } from 'lucide-react'
 
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
@@ -13,10 +13,6 @@ const navLinks = [
   { href: '/analytics', label: 'Analytics', icon: LineChart },
   { href: '/crowd-hotspots', label: 'Crowd Hotspots', icon: ImageIcon },
   { href: '/map-analysis', label: 'Map Analysis', icon: Map },
-]
-
-const bottomNavLinks = [
-  { href: '/users', label: 'Users', icon: Users },
 ]
 
 interface SidebarProps {
@@ -60,7 +56,6 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
           <span className="sr-only">Drishti AI</span>
         </Link>
         {navLinks.map(renderLink)}
-        {bottomNavLinks.map(renderLink)}
       </nav>
     )
   }
@@ -70,7 +65,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
       <nav className="flex flex-col gap-4 px-4 sm:py-5">
         <Link
           href="#"
-          className="group flex h-9 shrink-0 items-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:text-base"
+          className="group flex h-9 shrink-0 items-center gap-2 rounded-full bg-primary px-3 text-lg font-semibold text-primary-foreground md:h-8 md:text-base"
         >
           <Icons.logo className="h-5 w-5 transition-all group-hover:scale-110" />
           <span className="font-semibold">Drishti AI</span>
@@ -78,9 +73,6 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
         <div className="flex flex-col gap-y-2">
             {navLinks.map(renderLink)}
         </div>
-      </nav>
-      <nav className="mt-auto flex flex-col gap-4 px-4 sm:py-5">
-         {bottomNavLinks.map(renderLink)}
       </nav>
     </aside>
   )
