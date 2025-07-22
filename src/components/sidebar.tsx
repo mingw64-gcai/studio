@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, LineChart, ImageIcon, Users } from 'lucide-react'
+import { Home, LineChart, ImageIcon, Users, Map } from 'lucide-react'
 
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
@@ -12,6 +12,7 @@ const navLinks = [
   { href: '/', label: 'Dashboard', icon: Home },
   { href: '/analytics', label: 'Analytics', icon: LineChart },
   { href: '/crowd-hotspots', label: 'Crowd Hotspots', icon: ImageIcon },
+  { href: '/map-analysis', label: 'Map Analysis', icon: Map },
 ]
 
 const bottomNavLinks = [
