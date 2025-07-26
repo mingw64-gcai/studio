@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 const alerts = [
   {
     id: 1,
-    icon: <AlertTriangle className="h-4 w-4 fill-black stroke-destructive" />,
+    icon: <AlertTriangle className="h-4 w-4 fill-black" />,
     title: "High Density Alert",
     description: "Crowd density in Zone A has exceeded 90%.",
     time: "2m ago",
