@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, PanelLeft, FileVideo, RefreshCw, Video } from 'lucide-react';
+import { Upload, Loader2, Sparkles, PanelLeft, FileVideo, RefreshCw } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
@@ -99,6 +99,9 @@ export default function LiveVideoPage() {
       const response = await fetch(`${API_BASE_URL}/analyze/video`, {
         method: 'POST',
         body: formData,
+        headers: {
+            'ngrok-skip-browser-warning': 'true'
+        }
       });
 
       if (!response.ok) {
