@@ -11,7 +11,6 @@ import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { analyzeWalkPathImage } from '@/ai/flows/analyze-walk-path-image';
-import { Separator } from '@/components/ui/separator';
 
 const PATH_PREDICTION_IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753542455/crowd_analysis/job_20250726_164055_e62f7ced/Screenshot_2025-07-26_203612_ktbnza.png";
 
@@ -139,8 +138,8 @@ export default function PathPredictionPage() {
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-1">
-                <Card>
+            <div className="grid gap-4 md:grid-cols-2">
+                <Card className="border-t-[10px] border-t-[#EA4335] border-b-0 border-l-0 border-r-0">
                     <CardHeader>
                         <CardTitle>Walk Path Prediction</CardTitle>
                         <CardDescription>Predicted crowd movement paths based on video analysis.</CardDescription>
@@ -160,7 +159,7 @@ export default function PathPredictionPage() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-t-[10px] border-t-[#34A853] border-b-0 border-l-0 border-r-0">
                     <CardHeader>
                         <CardTitle>AI Analysis</CardTitle>
                         <CardDescription>AI-generated summary of the predicted paths.</CardDescription>
