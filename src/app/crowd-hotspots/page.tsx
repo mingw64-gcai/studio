@@ -13,6 +13,7 @@ import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import ReactMarkdown from 'react-markdown';
 
 const CROWD_DATA_IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753528344/crowd_analysis/job_20250726_164055_e62f7ced/crowd%20data.png.png";
 
@@ -167,7 +168,7 @@ export default function CrowdHotspotsPage() {
                             </div>
                         ) : analysisResult ? (
                             <div className="w-full space-y-4 text-sm">
-                                <p>{analysisResult}</p>
+                                <ReactMarkdown className="prose-sm max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-li:text-foreground">{analysisResult}</ReactMarkdown>
                             </div>
                         ) : (
                             <div className="flex flex-col items-center text-center text-muted-foreground">
