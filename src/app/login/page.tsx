@@ -67,7 +67,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-                <Icons.logo className="h-10 w-10 text-primary" />
+                <Icons.logo className="h-20 w-20 text-primary" />
             </div>
           <CardTitle className="text-2xl">Welcome to Drishti AI</CardTitle>
           <CardDescription>Enter your credentials to access the dashboard.</CardDescription>
