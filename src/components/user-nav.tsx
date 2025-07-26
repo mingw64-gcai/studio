@@ -36,7 +36,7 @@ export function UserNav() {
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
               <AvatarFallback
-                style={{ backgroundColor: "#FBBC05", color: "black" }}
+                style={{ backgroundColor: "#34A853", color: "white" }}
               >
                 AD
               </AvatarFallback>
