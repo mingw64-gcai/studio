@@ -60,7 +60,7 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
       }
     } catch (error) {
       console.error('Face count analysis failed', error);
-      // Don't show a toast here, as it would be annoying every 5 seconds.
+      // Don't show a toast here, as it would be annoying.
     }
   }, [setThreatLevel, setFaceCount]);
 
@@ -85,10 +85,17 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
     };
 
     getCameraPermission();
+  }, [toast]);
+  
+  useEffect(() => {
+    // Stop any existing interval
+    if (analysisIntervalRef.current) {
+        clearInterval(analysisIntervalRef.current);
+    }
 
     // Start analysis loop when component mounts and permission is granted
     if (hasCameraPermission) {
-        analysisIntervalRef.current = setInterval(analyzeFrame, 15000); // Analyze every 15 seconds
+        analysisIntervalRef.current = setInterval(analyzeFrame, 60000); // Analyze every 60 seconds
     }
     
     // Cleanup function
@@ -101,7 +108,7 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
             clearInterval(analysisIntervalRef.current);
         }
     }
-  }, [toast, hasCameraPermission, analyzeFrame]);
+  }, [hasCameraPermission, analyzeFrame]);
 
 
   const handleHeatmapToggle = async (checked: boolean) => {
