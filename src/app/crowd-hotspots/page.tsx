@@ -89,60 +89,17 @@ export default function CrowdHotspotsPage() {
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-1">
                 <Card>
                     <CardHeader>
                         <CardTitle>Chart Analysis</CardTitle>
                         <CardDescription>Analyze an image to get an AI summary about crowd gathering.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted">
-                        {selectedImage ? (
-                            <Image src={selectedImage} alt="Selected for analysis" fill style={{objectFit:'contain'}} unoptimized/>
-                        ) : (
-                            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                                <ImageIcon className="h-12 w-12" />
-                                <p>No image selected</p>
-                            </div>
-                        )}
-                        {isLoading && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-background/80">
-                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                                <p className="ml-2">Analyzing...</p>
-                            </div>
-                        )}
+                        <div className="relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-md border-muted-foreground/50 bg-muted aspect-video">
+                            <ImageIcon className="w-16 h-16 text-muted-foreground" />
+                            <p className="mt-2 text-center text-muted-foreground">Charts will be generated after a video is uploaded</p>
                         </div>
-                        <Button onClick={handleAnalyzeClick} disabled={isLoading || !selectedImage}>
-                        {isLoading ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                            <Sparkles className="mr-2 h-4 w-4" />
-                        )}
-                        Analyze
-                        </Button>
-                    </CardContent>
-                </Card>
-                
-                <Card>
-                    <CardHeader>
-                        <CardTitle>AI Analysis</CardTitle>
-                        <CardDescription>A summary of the crowd situation from Gemini.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex items-center justify-center min-h-[300px]">
-                        {isLoading ? (
-                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
-                                <Loader2 className="h-12 w-12 mb-4 animate-spin" />
-                                <p className="font-semibold">Analyzing...</p>
-                            </div>
-                        ) : analysisResult ? (
-                           <p className="text-sm text-foreground">{analysisResult}</p>
-                        ) : (
-                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
-                                <FileVideo2 className="h-12 w-12 mb-4" />
-                                <p className="font-semibold">No data to display.</p>
-                                <p className="text-sm">Output will be generated after a video is uploaded</p>
-                            </div>
-                        )}
                     </CardContent>
                 </Card>
             </div>
