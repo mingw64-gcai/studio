@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,9 +16,9 @@ const IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753528350
 
 export default function CrowdHotspotsPage() {
   const { toast } = useToast();
-  const [selectedImage, setSelectedImage] = useState<string | null>(IMAGE_URL);
+  const [selectedImage] = useState<string>(IMAGE_URL);
   const [isLoading, setIsLoading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<AnalyzeCrowdImageOutput | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
 
   const handleAnalyzeClick = async () => {
     if (!selectedImage) {
@@ -43,7 +43,7 @@ export default function CrowdHotspotsPage() {
             const result = await analyzeCrowdImage({
                 imageDataUri: base64data,
             });
-            setAnalysisResult(result);
+            setAnalysisResult(result.analysis);
           } catch (error) {
              console.error('Failed to analyze image', error);
              toast({
@@ -85,16 +85,16 @@ export default function CrowdHotspotsPage() {
               </SheetContent>
             </Sheet>
             <div className="relative ml-auto flex-1 md:grow-0">
-                <h1 className="text-xl font-semibold">Crowd Heatmap</h1>
+                <h1 className="text-xl font-semibold">Crowd Analysis</h1>
             </div>
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="lg:col-span-4">
+            <div className="grid gap-4 md:grid-cols-1">
+                <Card>
                     <CardHeader>
                         <CardTitle>Image Analysis</CardTitle>
-                        <CardDescription>Analyze the image to identify potential crowd gatherings and get an AI summary.</CardDescription>
+                        <CardDescription>Analyze the image to get an AI summary about crowd gathering.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted">
@@ -112,9 +112,6 @@ export default function CrowdHotspotsPage() {
                                 <p className="ml-2">Analyzing...</p>
                             </div>
                         )}
-                        {analysisResult && (
-                             <Image src={analysisResult.heatmapOverlayDataUri} alt="Analysis result" fill style={{objectFit:'contain'}} className="opacity-60" />
-                        )}
                         </div>
                         <Button onClick={handleAnalyzeClick} disabled={isLoading || !selectedImage}>
                         {isLoading ? (
@@ -126,32 +123,15 @@ export default function CrowdHotspotsPage() {
                         </Button>
                     </CardContent>
                 </Card>
-                 <Card className="lg:col-span-3">
-                    <CardHeader>
-                        <CardTitle>Heatmap Result</CardTitle>
-                        <CardDescription>Highlighted areas of potential congestion.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                         {analysisResult?.heatmapOverlayDataUri ? (
-                              <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                                  <Image src={analysisResult.heatmapOverlayDataUri} alt="Crowd heatmap" fill style={{objectFit:'contain'}} />
-                              </div>
-                          ) : (
-                              <div className="flex items-center justify-center h-48 rounded-md bg-muted text-muted-foreground">
-                                  <p>Heatmap results will appear here.</p>
-                              </div>
-                          )}
-                    </CardContent>
-                </Card>
             </div>
-            {analysisResult?.analysis && (
+            {analysisResult && (
                  <Card className="mt-4">
                     <CardHeader>
                         <CardTitle>AI Analysis</CardTitle>
                         <CardDescription>A summary of the crowd situation from Gemini.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-sm text-foreground">{analysisResult.analysis}</p>
+                        <p className="text-sm text-foreground">{analysisResult}</p>
                     </CardContent>
                 </Card>
             )}

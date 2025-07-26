@@ -2,9 +2,9 @@
 'use server';
 
 /**
- * @fileOverview Flow to analyze an image for crowd density, generate a heatmap, and provide a text analysis.
+ * @fileOverview Flow to analyze an image for crowd density and provide a text analysis.
  *
- * - analyzeCrowdImage - A function that analyzes an image and returns a heatmap and text summary.
+ * - analyzeCrowdImage - A function that analyzes an image and returns a text summary.
  * - AnalyzeCrowdImageInput - The input type for the analyzeCrowdImage function.
  * - AnalyzeCrowdImageOutput - The return type for the analyzeCrowdImage function.
  */
@@ -22,11 +22,6 @@ const AnalyzeCrowdImageInputSchema = z.object({
 export type AnalyzeCrowdImageInput = z.infer<typeof AnalyzeCrowdImageInputSchema>;
 
 const AnalyzeCrowdImageOutputSchema = z.object({
-  heatmapOverlayDataUri: z
-    .string()
-    .describe(
-      "A heatmap overlay image, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
-    ),
   analysis: z.string().describe("A text-based analysis of the crowd gathering in the image."),
 });
 export type AnalyzeCrowdImageOutput = z.infer<typeof AnalyzeCrowdImageOutputSchema>;
@@ -46,32 +41,13 @@ const analyzeCrowdImageFlow = ai.defineFlow(
   },
   async ({imageDataUri}) => {
 
-    const [heatmapResult, analysisResult] = await Promise.all([
-        // Generate heatmap
-        ai.generate({
-            model: 'googleai/gemini-2.0-flash-preview-image-generation',
-            prompt: [
-                {media: {url: imageDataUri}},
-                {text: 'Generate a heatmap overlay identifying areas of high crowd density. The heatmap should be red in the most dense areas, and fade to transparent in less dense areas.'},
-            ],
-            config: {
-                responseModalities: ['TEXT', 'IMAGE'],
-            },
-        }),
-        // Generate text analysis
-        ai.generate({
-            model: 'googleai/gemini-1.5-flash-latest',
-            prompt: [
-                {media: {url: imageDataUri}},
-                {text: 'You are an expert in crowd analysis. You will be shown an image with a generated visualization overlay. Explain what this visualization represents in the context of the original image. Describe what the colored areas signify about the crowd.'},
-            ]
-        })
-    ]);
-
-    const heatmapMedia = heatmapResult.media;
-    if (!heatmapMedia) {
-      throw new Error('The AI model did not return a heatmap image.');
-    }
+    const analysisResult = await ai.generate({
+        model: 'googleai/gemini-1.5-flash-latest',
+        prompt: [
+            {media: {url: imageDataUri}},
+            {text: 'You are an expert in crowd analysis. Analyze the provided image and describe the crowd gathering. Note any areas of high density, potential risks, or interesting patterns.'},
+        ]
+    });
 
     const analysisText = analysisResult.text;
      if (!analysisText) {
@@ -79,7 +55,6 @@ const analyzeCrowdImageFlow = ai.defineFlow(
     }
 
     return {
-      heatmapOverlayDataUri: heatmapMedia.url,
       analysis: analysisText,
     };
   }
