@@ -21,17 +21,20 @@ export function MetricsCards({ threatLevel, density }: MetricsCardsProps) {
     'Low': {
       text: 'Low',
       color: 'text-green-600',
-      description: 'No immediate threats detected'
+      description: 'No immediate threats detected',
+      alerts: 1,
     },
     'Moderate': {
       text: 'Moderate',
       color: 'text-[hsl(var(--chart-3))]',
-      description: 'Minor anomalies detected'
+      description: 'Minor anomalies detected',
+      alerts: 3,
     },
     'High': {
       text: 'High',
       color: 'text-destructive',
-      description: 'Anomalous patterns detected'
+      description: 'Anomalous patterns detected',
+      alerts: 5,
     }
   }
   const currentThreat = threatLevelConfig[threatLevel];
@@ -45,6 +48,29 @@ export function MetricsCards({ threatLevel, density }: MetricsCardsProps) {
       return 'text-green-600'; // Green
     }
   };
+  
+  const getAlertColor = (count: number) => {
+    if (count >= 5) {
+      return 'text-destructive'; // Red
+    } else if (count >= 3) {
+      return 'text-[hsl(var(--chart-3))]'; // Yellow
+    } else {
+      return 'text-green-600'; // Green
+    }
+  }
+  
+  const getAlertsDescription = (level: ThreatLevel) => {
+    switch (level) {
+      case 'Low':
+        return '1 low priority';
+      case 'Moderate':
+        return '2 medium, 1 low priority';
+      case 'High':
+        return '3 high, 2 medium priority';
+      default:
+        return '';
+    }
+  }
 
 
   return (
@@ -74,11 +100,13 @@ export function MetricsCards({ threatLevel, density }: MetricsCardsProps) {
       <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>Active Alerts</CardDescription>
-          <CardTitle className="text-4xl text-[hsl(var(--chart-3))]">3</CardTitle>
+          <CardTitle className={cn("text-4xl", getAlertColor(currentThreat.alerts))}>
+            {currentThreat.alerts}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">
-            2 high, 1 medium priority
+            {getAlertsDescription(threatLevel)}
           </div>
         </CardContent>
       </Card>
