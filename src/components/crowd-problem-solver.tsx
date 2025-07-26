@@ -11,10 +11,11 @@ import {
 } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2, Sparkles, Wand } from 'lucide-react';
+import { Loader2, Wand } from 'lucide-react';
 import { solveCrowdProblem, SolveCrowdProblemOutput } from '@/ai/flows/solve-crowd-problem';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
+import ReactMarkdown from 'react-markdown';
 
 export function CrowdProblemSolver() {
   const { toast } = useToast();
@@ -86,15 +87,15 @@ export function CrowdProblemSolver() {
               </div>
             )}
             {result && (
-              <div className="space-y-4">
+              <div className="space-y-4 prose prose-sm dark:prose-invert max-w-none">
                 <div>
                     <h3 className="font-semibold text-foreground">Problem Analysis</h3>
-                    <p className="text-sm text-foreground">{result.analysis}</p>
+                    <ReactMarkdown>{result.analysis}</ReactMarkdown>
                 </div>
                 <Separator />
                  <div>
                     <h3 className="font-semibold text-foreground">Suggested Solution</h3>
-                    <p className="text-sm text-foreground">{result.solution}</p>
+                    <ReactMarkdown>{result.solution}</ReactMarkdown>
                 </div>
               </div>
             )}
