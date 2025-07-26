@@ -4,15 +4,31 @@ export const Icons = {
   logo: (props: SVGProps<SVGSVGElement>) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 60 36"
       {...props}
     >
-      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{stopColor: '#FDBB2D', stopOpacity:1}} />
+          <stop offset="100%" style={{stopColor: '#34A853', stopOpacity:1}} />
+        </linearGradient>
+      </defs>
+      <path
+        fill="#34A853"
+        d="M31.2,36c-8.1,0-15.5-4.8-18.8-12.4C5.4,8.5,14.6,0,25.2,0c4.1,0,8,1.3,11.2,3.6c-3.3,2.5-5.5,6.4-5.5,10.8 c0,0.4,0,0.8,0.1,1.2H21c-2.8,0-5,2.2-5,5s2.2,5,5,5h11.8C32.4,30.3,29.1,34,25.2,36C25.2,36,31.2,36,31.2,36z"
+      />
+      <path
+        fill="#4285F4"
+        d="M36.4,3.6c3.2-2.3,7.1-3.6,11.2-3.6c10.6,0,19.8,8.5,22.4,22.8C65.2,11.3,53.8,1.2,40.9,4.4 C39.2,5.2,37.7,6.1,36.4,7.2V7.2C36.4,5.8,36.4,3.6,36.4,3.6z"
+      />
+      <path
+        fill="#EA4335"
+        d="M40.9,4.4C53.8,1.2,65.2,11.3,60.4,22.8c-0.6,1.4-1.3,2.8-2.2,4c-3.3-3.6-7.9-6-13.1-6 c-3.9,0-7.4,1.4-10.1,3.6C36.4,22.1,37.5,13.2,40.9,4.4z"
+      />
+      <path
+        fill="url(#grad1)"
+        d="M35.1,24.4c2.7-2.2,6.2-3.6,10.1-3.6c5.2,0,9.8,2.4,13.1,6c-4.8,9.5-15.5,14.9-25.2,10.3 C28.9,34.7,32.4,30.3,35.1,24.4z"
+      />
     </svg>
   ),
 };
