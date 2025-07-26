@@ -216,7 +216,7 @@ export default function LiveVideoPage() {
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
             <div className="grid gap-4 md:grid-cols-2">
-                <Card className="border-t-4 border-t-destructive">
+                <Card className="border-t-8 border-t-destructive">
                     <CardHeader>
                         <CardTitle>Input Video</CardTitle>
                         <CardDescription>
