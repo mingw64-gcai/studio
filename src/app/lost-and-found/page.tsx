@@ -205,7 +205,7 @@ export default function LostAndFoundPage() {
                   </SheetContent>
                 </Sheet>
                 <div className="relative ml-auto flex-1 md:grow-0">
-                    <h1 className="text-xl font-semibold">Lost and Found</h1>
+                    <h1 className="text-xl font-semibold whitespace-nowrap">Lost and Found</h1>
                 </div>
                 <UserNav />
             </header>
