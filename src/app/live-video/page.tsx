@@ -209,8 +209,8 @@ export default function LiveVideoPage() {
                 <Sidebar isSheet={true} />
               </SheetContent>
             </Sheet>
-            <div className="relative ml-auto flex-1 md:grow-0">
-                <h1 className="text-2xl font-bold">Live Video Analysis</h1>
+            <div className="flex-1">
+                <h1 className="text-2xl font-bold text-right">Live Video Analysis</h1>
             </div>
             <UserNav />
         </header>
