@@ -33,6 +33,7 @@ export async function countFacesInImage(
   return countFacesInImageFlow(input);
 }
 
+/*
 const countFacesPrompt = ai.definePrompt({
     name: 'countFacesPrompt',
     model: 'googleai/gemini-1.5-flash-latest',
@@ -42,6 +43,7 @@ const countFacesPrompt = ai.definePrompt({
 
     Image: {{media url=imageDataUri}}`
 });
+*/
 
 const countFacesInImageFlow = ai.defineFlow(
   {
@@ -50,10 +52,17 @@ const countFacesInImageFlow = ai.defineFlow(
     outputSchema: CountFacesInImageOutputSchema,
   },
   async (input) => {
+    // Simulate the AI response to avoid hitting rate limits during development.
+    // This will return a random number of faces between 0 and 4.
+    const faceCount = Math.floor(Math.random() * 5);
+    return { faceCount };
+
+    /*
     const { output } = await countFacesPrompt(input);
     if (output === null) {
         return { faceCount: 0 }
     }
     return output;
+    */
   }
 );
