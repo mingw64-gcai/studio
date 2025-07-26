@@ -66,13 +66,16 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col gap-4 px-4 sm:py-5">
-        <Link
-          href="#"
-          className="group flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-lg font-semibold text-primary-foreground"
-        >
-          <Icons.logo className="h-6 w-6 transition-all group-hover:scale-110" />
-          <span className="font-semibold whitespace-nowrap">Drishti AI Mingw64</span>
-        </Link>
+        <div className="flex flex-col items-center gap-4">
+            <Link href="/" className="group flex items-center justify-center">
+                <Icons.logo className="h-16 w-16 transition-all group-hover:scale-110" />
+            </Link>
+            <div
+            className="group flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-lg font-semibold text-primary-foreground"
+            >
+            <span className="font-semibold whitespace-nowrap">Drishti AI Mingw64</span>
+            </div>
+        </div>
         <div className="flex flex-col gap-y-2">
             {navLinks.map(renderLink)}
         </div>
