@@ -16,18 +16,18 @@ import { PanelLeft, BarChart2 } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 
 const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
+  { month: 'January', alerts: 12 },
+  { month: 'February', alerts: 15 },
+  { month: 'March', alerts: 8 },
+  { month: 'April', alerts: 22 },
+  { month: 'May', alerts: 18 },
+  { month: 'June', alerts: 30 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'hsl(var(--chart-1))',
+  alerts: {
+    label: 'Alerts',
+    color: 'hsl(var(--destructive))',
   },
 };
 
@@ -66,8 +66,8 @@ export default function AnalyticsPage() {
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
             <Card>
                 <CardHeader>
-                    <CardTitle>Crowd Density Analytics</CardTitle>
-                    <CardDescription>January - June 2024</CardDescription>
+                    <CardTitle>High-Density Alerts</CardTitle>
+                    <CardDescription>Alerts triggered per month (January - June 2024)</CardDescription>
                 </CardHeader>
                 <CardContent className="flex items-center justify-center min-h-[400px]">
                     {isLoading ? (
@@ -87,7 +87,7 @@ export default function AnalyticsPage() {
                                 cursor={false}
                                 content={<ChartTooltipContent hideLabel />}
                                 />
-                                <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+                                <Bar dataKey="alerts" fill="var(--color-alerts)" radius={8} />
                             </BarChart>
                         </ChartContainer>
                     ) : (
