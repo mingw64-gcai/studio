@@ -51,6 +51,10 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
                     <RadioGroupItem value="system" id="system" />
                     <Label htmlFor="system">System</Label>
                 </div>
+                <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="auto" id="auto" />
+                    <Label htmlFor="auto">Auto</Label>
+                </div>
             </RadioGroup>
           </div>
         </div>
