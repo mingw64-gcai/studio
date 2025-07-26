@@ -44,6 +44,13 @@ const analyzeImageForCrowdsFlow = ai.defineFlow(
     outputSchema: AnalyzeImageForCrowdsOutputSchema,
   },
   async ({imageDataUri}) => {
+
+    // Mocked response to avoid hitting API rate limits
+    return {
+      heatmapOverlayDataUri: "https://placehold.co/1280x720/ff0000/ff0000.png?text=Heatmap+Overlay",
+    }
+    
+    /*
     const {media} = await ai.generate({
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
       prompt: [
@@ -62,5 +69,6 @@ const analyzeImageForCrowdsFlow = ai.defineFlow(
     return {
       heatmapOverlayDataUri: media.url,
     };
+    */
   }
 );

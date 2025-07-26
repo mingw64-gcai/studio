@@ -41,6 +41,13 @@ const analyzeWalkPathImageFlow = ai.defineFlow(
   },
   async ({imageDataUri}) => {
 
+    // Mocked response to avoid hitting API rate limits
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return {
+        analysis: "The walk path analysis indicates a strong flow of movement from the main entrance towards the central stage. A secondary, less dense path is observed branching off towards the vendor stalls on the right. A potential congestion point is identified at the intersection of these two paths, where the crowd density is likely to be highest. Consider placing staff at this intersection to guide traffic and prevent bottlenecks."
+    };
+
+    /*
     const analysisResult = await ai.generate({
         model: 'googleai/gemini-1.5-flash-latest',
         prompt: [
@@ -57,5 +64,6 @@ const analyzeWalkPathImageFlow = ai.defineFlow(
     return {
       analysis: analysisText,
     };
+    */
   }
 );

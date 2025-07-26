@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -47,6 +48,13 @@ const generateHeatmapOverlayFlow = ai.defineFlow(
     outputSchema: GenerateHeatmapOverlayOutputSchema,
   },
   async ({ videoDataUri, keywords }) => {
+
+    // Mocked response to avoid hitting API rate limits
+     return {
+      heatmapOverlayDataUri: "https://placehold.co/1280x720/ff0000/ff0000.png?text=Heatmap+Overlay",
+    }
+    
+    /*
      const {media} = await ai.generate({
       model: 'googleai/gemini-2.0-flash-preview-image-generation',
       prompt: [
@@ -65,5 +73,6 @@ const generateHeatmapOverlayFlow = ai.defineFlow(
     return {
       heatmapOverlayDataUri: media.url,
     };
+    */
   }
 );

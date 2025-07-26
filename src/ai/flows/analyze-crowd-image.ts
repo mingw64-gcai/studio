@@ -40,7 +40,25 @@ const analyzeCrowdImageFlow = ai.defineFlow(
     outputSchema: AnalyzeCrowdImageOutputSchema,
   },
   async ({imageDataUri}) => {
+    // Mocked response to avoid hitting API rate limits
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return {
+        analysis: `
+### Crowd Distribution Analysis
 
+Based on the generated chart, here's a breakdown of the crowd distribution:
+
+*   **Peak Density:** The highest concentration of people is located in the central plaza, right in front of the main stage. This area shows deep red, indicating potential overcrowding.
+*   **Moderate Zones:** The pathways leading to and from the food court exhibit moderate density (yellow and orange hues). While not critical, these are areas to monitor for increasing congestion.
+*   **Low Density:** The areas near the restrooms and the outer perimeter are green, indicating sparse crowds and free movement.
+
+**Recommendations:**
+1.  Monitor the central plaza continuously.
+2.  Consider rerouting some foot traffic away from the food court paths if density increases.
+`
+    };
+
+    /*
     const analysisResult = await ai.generate({
         model: 'googleai/gemini-1.5-flash-latest',
         prompt: [
@@ -57,5 +75,6 @@ const analyzeCrowdImageFlow = ai.defineFlow(
     return {
       analysis: analysisText,
     };
+    */
   }
 );
