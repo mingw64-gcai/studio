@@ -140,7 +140,7 @@ export default function CrowdHotspotsPage() {
                             <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
                                 <FileVideo2 className="h-12 w-12 mb-4" />
                                 <p className="font-semibold">No data to display.</p>
-                                <p className="text-sm">Output will be generated after an image is analyzed.</p>
+                                <p className="text-sm">Output will be generated after a video is uploaded</p>
                             </div>
                         )}
                     </CardContent>
