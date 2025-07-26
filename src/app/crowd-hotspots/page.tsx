@@ -1,40 +1,24 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, PanelLeft } from 'lucide-react';
-import { analyzeImageForCrowds } from '@/ai/flows/analyze-image-for-crowds';
+import { Loader2, Sparkles, PanelLeft } from 'lucide-react';
+import { analyzeCrowdImage, AnalyzeCrowdImageOutput } from '@/ai/flows/analyze-crowd-image';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
+const IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753528350/crowd_analysis/job_20250726_164055_e62f7ced/heatmap.png.png";
+
 export default function CrowdHotspotsPage() {
   const { toast } = useToast();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [originalImageFile, setOriginalImageFile] = useState<File | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(IMAGE_URL);
   const [isLoading, setIsLoading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      setOriginalImageFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setSelectedImage(e.target.result as string);
-          setAnalysisResult(null);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const [analysisResult, setAnalysisResult] = useState<AnalyzeCrowdImageOutput | null>(null);
 
   const handleAnalyzeClick = async () => {
     if (!selectedImage) {
@@ -48,25 +32,41 @@ export default function CrowdHotspotsPage() {
     setIsLoading(true);
     setAnalysisResult(null);
     try {
-      const result = await analyzeImageForCrowds({
-        imageDataUri: selectedImage,
-      });
-      setAnalysisResult(result.heatmapOverlayDataUri);
+      // Fetch the image and convert to data URI
+      const response = await fetch(selectedImage);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+          const base64data = reader.result as string;
+          try {
+            const result = await analyzeCrowdImage({
+                imageDataUri: base64data,
+            });
+            setAnalysisResult(result);
+          } catch (error) {
+             console.error('Failed to analyze image', error);
+             toast({
+                variant: 'destructive',
+                title: 'Analysis Failed',
+                description: 'There was a problem communicating with the AI model.',
+             });
+          } finally {
+             setIsLoading(false);
+          }
+      };
+
     } catch (error) {
-      console.error('Failed to analyze image', error);
+      console.error('Failed to fetch or process image', error);
       toast({
         variant: 'destructive',
-        title: 'Analysis Failed',
-        description: 'There was a problem communicating with the AI model.',
+        title: 'Image Load Failed',
+        description: 'Could not load the image from the provided URL.',
       });
-    } finally {
       setIsLoading(false);
     }
   };
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -94,16 +94,16 @@ export default function CrowdHotspotsPage() {
                 <Card className="lg:col-span-4">
                     <CardHeader>
                         <CardTitle>Image Analysis</CardTitle>
-                        <CardDescription>Upload an image to identify potential crowd gatherings.</CardDescription>
+                        <CardDescription>Analyze the image to identify potential crowd gatherings and get an AI summary.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted">
                         {selectedImage ? (
-                            <Image src={selectedImage} alt="Selected for analysis" fill style={{objectFit:'contain'}} />
+                            <Image src={selectedImage} alt="Selected for analysis" fill style={{objectFit:'contain'}} unoptimized/>
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                                <Upload className="h-12 w-12" />
-                                <p>Upload an image to begin</p>
+                                <Loader2 className="h-12 w-12" />
+                                <p>Loading Image...</p>
                             </div>
                         )}
                         {isLoading && (
@@ -113,51 +113,48 @@ export default function CrowdHotspotsPage() {
                             </div>
                         )}
                         {analysisResult && (
-                             <Image src={analysisResult} alt="Analysis result" fill style={{objectFit:'contain'}} className="opacity-60" />
+                             <Image src={analysisResult.heatmapOverlayDataUri} alt="Analysis result" fill style={{objectFit:'contain'}} className="opacity-60" />
                         )}
                         </div>
-
-                        <Input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            className="hidden"
-                            accept="image/*"
-                        />
-                        <div className="flex gap-2">
-                             <Button onClick={handleUploadClick} variant="outline">
-                                <Upload className="mr-2 h-4 w-4" />
-                                Upload Image
-                            </Button>
-                            <Button onClick={handleAnalyzeClick} disabled={isLoading || !selectedImage}>
-                            {isLoading ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                                <Sparkles className="mr-2 h-4 w-4" />
-                            )}
-                            Analyze
-                            </Button>
-                        </div>
+                        <Button onClick={handleAnalyzeClick} disabled={isLoading || !selectedImage}>
+                        {isLoading ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Sparkles className="mr-2 h-4 w-4" />
+                        )}
+                        Analyze
+                        </Button>
                     </CardContent>
                 </Card>
                  <Card className="lg:col-span-3">
                     <CardHeader>
-                        <CardTitle>Results</CardTitle>
+                        <CardTitle>Heatmap Result</CardTitle>
                         <CardDescription>Highlighted areas of potential congestion.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                         {analysisResult ? (
+                         {analysisResult?.heatmapOverlayDataUri ? (
                               <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                                  <Image src={analysisResult} alt="Crowd heatmap" fill style={{objectFit:'contain'}} />
+                                  <Image src={analysisResult.heatmapOverlayDataUri} alt="Crowd heatmap" fill style={{objectFit:'contain'}} />
                               </div>
                           ) : (
                               <div className="flex items-center justify-center h-48 rounded-md bg-muted text-muted-foreground">
-                                  <p>Analysis results will appear here.</p>
+                                  <p>Heatmap results will appear here.</p>
                               </div>
                           )}
                     </CardContent>
                 </Card>
             </div>
+            {analysisResult?.analysis && (
+                 <Card className="mt-4">
+                    <CardHeader>
+                        <CardTitle>AI Analysis</CardTitle>
+                        <CardDescription>A summary of the crowd situation from Gemini.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-foreground">{analysisResult.analysis}</p>
+                    </CardContent>
+                </Card>
+            )}
         </main>
         </div>
     </div>
