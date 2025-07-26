@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, LineChart, ImageIcon, Map, Footprints, UserSearch } from 'lucide-react'
+import { Home, LineChart, ImageIcon, Map, Footprints, UserSearch, Video } from 'lucide-react'
 
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
@@ -13,6 +13,7 @@ const navLinks = [
   { href: '/analytics', label: 'Analytics', icon: LineChart },
   { href: '/crowd-hotspots', label: 'Crowd Heatmap', icon: ImageIcon },
   { href: '/map-analysis', label: 'Map Analysis', icon: Map },
+  { href: '/live-video', label: 'Live Video', icon: Video },
   { href: '/path-prediction', label: 'Path Prediction', icon: Footprints },
   { href: '/lost-and-found', label: 'Lost and Found', icon: UserSearch },
 ]
@@ -79,3 +80,5 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
     </aside>
   )
 }
+
+    
