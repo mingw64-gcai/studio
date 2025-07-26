@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,24 @@ type JobStatus = 'idle' | 'processing' | 'success' | 'error';
 
 const PROCESSED_VIDEO_URL = "https://res.cloudinary.com/dtwt3cwfo/video/upload/v1753539347/crowd_analysis/job_20250726_164055_e62f7ced/processed_video_ahe73z.mkv";
 
+// Helper to convert data URL to File object
+const dataURLtoFile = (dataurl: string, filename: string) => {
+    const arr = dataurl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    if (!mimeMatch) {
+        return null;
+    }
+    const mime = mimeMatch[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+}
+
+
 export default function LiveVideoPage() {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -33,8 +51,23 @@ export default function LiveVideoPage() {
     setIsClient(true)
   }, [])
 
+  useEffect(() => {
+    if (isClient) {
+        const savedStatus = localStorage.getItem('videoStatus') as JobStatus;
+        const savedProcessedUrl = localStorage.getItem('processedVideoUrl');
+        const savedInputVideoData = localStorage.getItem('inputVideoData');
+        const savedInputVideoName = localStorage.getItem('inputVideoName');
 
-  const resetState = () => {
+        if (savedStatus) setStatus(savedStatus);
+        if (savedProcessedUrl) setProcessedVideoUrl(savedProcessedUrl);
+        if (savedInputVideoData && savedInputVideoName) {
+            const file = dataURLtoFile(savedInputVideoData, savedInputVideoName);
+            setSelectedFile(file);
+        }
+    }
+  }, [isClient]);
+
+  const resetState = useCallback(() => {
     setSelectedFile(null);
     setStatus('idle');
     setError(null);
@@ -42,14 +75,27 @@ export default function LiveVideoPage() {
     if(fileInputRef.current) {
         fileInputRef.current.value = "";
     }
+    // Clear from local storage
     localStorage.removeItem('isVideoProcessed');
-  }
+    localStorage.removeItem('videoStatus');
+    localStorage.removeItem('processedVideoUrl');
+    localStorage.removeItem('inputVideoData');
+    localStorage.removeItem('inputVideoName');
+  }, []);
 
   const handleFileChange = (file: File | null) => {
     if (file) {
         if (file.type.startsWith('video/')) {
             resetState();
             setSelectedFile(file);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if(e.target?.result) {
+                    localStorage.setItem('inputVideoData', e.target.result as string);
+                    localStorage.setItem('inputVideoName', file.name);
+                }
+            };
+            reader.readAsDataURL(file);
         } else {
             toast({
                 variant: 'destructive',
@@ -99,8 +145,10 @@ export default function LiveVideoPage() {
     }
 
     setStatus('processing');
+    localStorage.setItem('videoStatus', 'processing');
     setError(null);
     setProcessedVideoUrl(null);
+    localStorage.removeItem('processedVideoUrl');
     
     toast({
         title: 'Video Sent to Backend',
@@ -112,14 +160,18 @@ export default function LiveVideoPage() {
             setProcessedVideoUrl(PROCESSED_VIDEO_URL);
             setStatus('success');
             localStorage.setItem('isVideoProcessed', 'true');
+            localStorage.setItem('videoStatus', 'success');
+            localStorage.setItem('processedVideoUrl', PROCESSED_VIDEO_URL);
             toast({
                 title: 'Processing Complete',
                 description: 'The processed video is ready.',
             });
         } catch(e) {
             console.error("Failed to load processed video:", e);
-            setError("Could not load the processed video from the server.");
+            const errorMsg = "Could not load the processed video from the server.";
+            setError(errorMsg);
             setStatus('error');
+            localStorage.setItem('videoStatus', 'error');
              toast({
                 variant: 'destructive',
                 title: 'Failed to load video',
@@ -136,7 +188,7 @@ export default function LiveVideoPage() {
          return (
             <div className='aspect-video w-full'>
                 <video 
-                    key={URL.createObjectURL(selectedFile)}
+                    key={selectedFile.name}
                     src={URL.createObjectURL(selectedFile)} 
                     controls 
                     className="w-full h-full rounded-md" 
