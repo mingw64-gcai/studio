@@ -34,7 +34,11 @@ export default function PathPredictionPage() {
 
   const handleAnalyzeClick = async () => {
     if (!selectedVideo) {
-        // If no video is selected, trigger the file input click
+        toast({
+          variant: 'destructive',
+          title: 'No Video Selected',
+          description: 'Please upload a video to predict the path.',
+        });
         fileInputRef.current?.click();
         return;
     }
@@ -114,13 +118,13 @@ export default function PathPredictionPage() {
                             accept="video/*"
                         />
                         <div className="flex gap-2">
-                            <Button onClick={handleAnalyzeClick} disabled={isLoading}>
+                            <Button onClick={handleAnalyzeClick} disabled={isLoading || !selectedVideo}>
                             {isLoading ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : (
                                 <Sparkles className="mr-2 h-4 w-4" />
                             )}
-                            {selectedVideo ? 'Predict Path' : 'Upload Video'}
+                            Predict Path
                             </Button>
                         </div>
                     </CardContent>
