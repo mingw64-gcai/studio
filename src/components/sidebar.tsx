@@ -1,4 +1,3 @@
-
 'use client'
 
 import Link from 'next/link'
@@ -61,7 +60,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
         </Link>
         {navLinks.map(renderLink)}
          <div className="mt-auto">
-            <Button variant="destructive" className="w-full">
+            <Button variant="destructive" className="w-full text-lg font-bold">
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 SOS
             </Button>
@@ -90,7 +89,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
             </div>
         </nav>
         <div className="mt-auto p-4">
-             <Button variant="destructive" className="w-full">
+             <Button variant="destructive" className="w-full text-lg font-bold">
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 SOS
             </Button>
