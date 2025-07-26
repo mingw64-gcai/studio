@@ -34,12 +34,9 @@ export default function PathPredictionPage() {
 
   const handleAnalyzeClick = async () => {
     if (!selectedVideo) {
-      toast({
-        variant: 'destructive',
-        title: 'No Video Selected',
-        description: 'Please upload a video to analyze.',
-      });
-      return;
+        // If no video is selected, trigger the file input click
+        fileInputRef.current?.click();
+        return;
     }
     setIsLoading(true);
     setAnalysisResult(null);
@@ -90,13 +87,16 @@ export default function PathPredictionPage() {
                         <CardDescription>Upload a video to predict crowd movement paths.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted">
+                        <div 
+                            className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted cursor-pointer"
+                            onClick={() => fileInputRef.current?.click()}
+                        >
                         {selectedVideo ? (
                             <video src={selectedVideo} controls className="w-full h-full object-contain" />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                                 <Upload className="h-12 w-12" />
-                                <p>Upload a video to begin</p>
+                                <p>Click to upload a video to begin</p>
                             </div>
                         )}
                         {isLoading && (
@@ -118,17 +118,13 @@ export default function PathPredictionPage() {
                             accept="video/*"
                         />
                         <div className="flex gap-2">
-                             <Button onClick={handleUploadClick} variant="outline">
-                                <Upload className="mr-2 h-4 w-4" />
-                                Upload Video
-                            </Button>
-                            <Button onClick={handleAnalyzeClick} disabled={isLoading || !selectedVideo}>
+                            <Button onClick={handleAnalyzeClick} disabled={isLoading}>
                             {isLoading ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : (
                                 <Sparkles className="mr-2 h-4 w-4" />
                             )}
-                            Predict Path
+                            {selectedVideo ? 'Predict Path' : 'Upload Video'}
                             </Button>
                         </div>
                     </CardContent>
