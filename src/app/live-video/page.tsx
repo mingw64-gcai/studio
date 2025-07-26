@@ -13,7 +13,7 @@ import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-const API_BASE_URL = 'https://dbaeb561a825.ngrok-free.app';
+const API_BASE_URL = 'https://0f2b00637027.ngrok-free.app';
 
 export default function LiveVideoPage() {
   const { toast } = useToast();
