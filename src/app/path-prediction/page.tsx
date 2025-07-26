@@ -1,62 +1,115 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, PanelLeft, Footprints } from 'lucide-react';
+import { Loader2, Sparkles, PanelLeft, Footprints } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { analyzeWalkPathImage } from '@/ai/flows/analyze-walk-path-image';
+import { Separator } from '@/components/ui/separator';
+
+const PATH_PREDICTION_IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753542455/crowd_analysis/job_20250726_164055_e62f7ced/Screenshot_2025-07-26_203612_ktbnza.png";
 
 export default function PathPredictionPage() {
   const { toast } = useToast();
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageToAnalyze, setImageToAnalyze] = useState<string | null>(null);
+  const [isVideoProcessed, setIsVideoProcessed] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-  const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          setSelectedVideo(e.target.result as string);
-          setAnalysisResult(null);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-  const handleAnalyzeClick = async () => {
-    if (!selectedVideo) {
-        toast({
-          variant: 'destructive',
-          title: 'No Video Selected',
-          description: 'Please upload a video to predict the path.',
-        });
-        fileInputRef.current?.click();
-        return;
-    }
+  const resetState = useCallback(() => {
+    setIsLoading(false);
+    setAnalysisResult(null);
+    setImageToAnalyze(null);
+    setIsVideoProcessed(false);
+  }, []);
+
+  const handleAnalyze = useCallback(async () => {
     setIsLoading(true);
     setAnalysisResult(null);
-    
-    // Simulate API call
-    setTimeout(() => {
-      // In a real app, you would get the result from your backend API
-      // For now, we'll use a placeholder video as the result
-      setAnalysisResult("https://placehold.co/1280x720/0000ff/0000ff.png?text=+");
-      setIsLoading(false);
+    setImageToAnalyze(PATH_PREDICTION_IMAGE_URL);
+
+    try {
+      // Fetch the image and convert to data URI
+      const response = await fetch(PATH_PREDICTION_IMAGE_URL);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = async () => {
+          const base64data = reader.result as string;
+          try {
+            const result = await analyzeWalkPathImage({
+                imageDataUri: base64data,
+            });
+            setAnalysisResult(result.analysis);
+          } catch (error) {
+             console.error('Failed to analyze image', error);
+             toast({
+                variant: 'destructive',
+                title: 'Analysis Failed',
+                description: 'There was a problem communicating with the AI model.',
+             });
+             resetState();
+          } finally {
+             setIsLoading(false);
+          }
+      };
+    } catch (error) {
+      console.error('Failed to fetch or process image', error);
       toast({
-        title: 'Analysis Complete',
-        description: 'Predicted walk path has been generated.',
+        variant: 'destructive',
+        title: 'Image Load Failed',
+        description: 'Could not load the image from the provided URL.',
       });
-    }, 3000);
-  };
+      resetState();
+    }
+  }, [toast, resetState]);
+
+
+  useEffect(() => {
+    if (!isClient) return;
+
+    const checkVideoStatus = () => {
+      const processed = localStorage.getItem('isVideoProcessed') === 'true';
+      if (processed && !isVideoProcessed) {
+        setIsVideoProcessed(true);
+        toast({
+          title: 'Analysis Starting',
+          description: 'Generating walk path prediction. This will take about 5 seconds.',
+        });
+        const timer = setTimeout(() => {
+          handleAnalyze();
+        }, 5000); 
+        return () => clearTimeout(timer);
+      } else if (!processed && isVideoProcessed) {
+        resetState();
+      }
+    };
+
+    checkVideoStatus();
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'isVideoProcessed') {
+        checkVideoStatus();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+
+  }, [isClient, isVideoProcessed, handleAnalyze, resetState, toast]);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -84,49 +137,46 @@ export default function PathPredictionPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Walk Path Prediction</CardTitle>
-                        <CardDescription>Upload a video to predict crowd movement paths.</CardDescription>
+                        <CardDescription>Predicted crowd movement paths based on video analysis.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent>
                         <div 
-                            className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted cursor-pointer"
-                            onClick={() => fileInputRef.current?.click()}
+                            className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted"
                         >
-                        {selectedVideo ? (
-                            <video src={selectedVideo} controls className="w-full h-full object-contain" />
+                        {imageToAnalyze ? (
+                            <Image src={imageToAnalyze} alt="Walk path prediction" fill objectFit="contain" />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                                 <Footprints className="h-12 w-12" />
                                 <p>Walk Path Prediction will be generated after a video is uploaded</p>
                             </div>
                         )}
-                        {isLoading && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-background/80">
-                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                                <p className="ml-2">Predicting...</p>
+                        </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>AI Analysis</CardTitle>
+                        <CardDescription>AI-generated summary of the predicted paths.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-center min-h-[200px]">
+                        {isLoading ? (
+                            <div className="flex flex-col items-center text-center">
+                                <Loader2 className="w-12 h-12 mb-4 animate-spin text-primary" />
+                                <p className="font-semibold">Analyzing Prediction...</p>
+                                <p className="text-sm text-muted-foreground">Please wait a moment.</p>
+                            </div>
+                        ) : analysisResult ? (
+                            <div className="w-full space-y-4 text-sm">
+                                <p>{analysisResult}</p>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center text-center text-muted-foreground">
+                                <Sparkles className="w-12 h-12 mb-4" />
+                                <p className="font-semibold">No analysis to display.</p>
+                                <p className="text-sm">Output will be generated after a video is uploaded.</p>
                             </div>
                         )}
-                        {analysisResult && (
-                             <video src={analysisResult} autoPlay loop muted className="absolute inset-0 w-full h-full object-contain opacity-60" />
-                        )}
-                        </div>
-
-                        <Input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleVideoChange}
-                            className="hidden"
-                            accept="video/*"
-                        />
-                        <div className="flex gap-2">
-                            <Button onClick={handleAnalyzeClick} disabled={isLoading || !selectedVideo}>
-                            {isLoading ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                                <Sparkles className="mr-2 h-4 w-4" />
-                            )}
-                            Predict Path
-                            </Button>
-                        </div>
                     </CardContent>
                 </Card>
             </div>
