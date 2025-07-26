@@ -10,8 +10,8 @@ import { cn } from '@/lib/utils'
 
 const navLinks = [
   { href: '/', label: 'Dashboard', icon: Home },
-  { href: '/analytics', label: 'Analytics', icon: LineChart },
   { href: '/live-video', label: 'Live Video', icon: Video },
+  { href: '/analytics', label: 'Analytics', icon: LineChart },
   { href: '/crowd-hotspots', label: 'Crowd Heatmap', icon: ImageIcon },
   { href: '/map-analysis', label: 'Map Analysis', icon: Map },
   { href: '/path-prediction', label: 'Path Prediction', icon: Footprints },
@@ -83,5 +83,3 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
     </aside>
   )
 }
-
-    
