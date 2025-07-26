@@ -1,38 +1,48 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Sparkles, PanelLeft, ImageIcon, FileVideo2 } from 'lucide-react';
-import { analyzeCrowdImage, AnalyzeCrowdImageOutput } from '@/ai/flows/analyze-crowd-image';
+import { Loader2, Sparkles, PanelLeft, ImageIcon } from 'lucide-react';
+import { analyzeCrowdImage } from '@/ai/flows/analyze-crowd-image';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
+
+const CROWD_DATA_IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753528344/crowd_analysis/job_20250726_164055_e62f7ced/crowd%20data.png.png";
 
 export default function CrowdHotspotsPage() {
   const { toast } = useToast();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [imageToAnalyze, setImageToAnalyze] = useState<string | null>(null);
+  const [isVideoProcessed, setIsVideoProcessed] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-  const handleAnalyzeClick = async () => {
-    if (!selectedImage) {
-      toast({
-        variant: 'destructive',
-        title: 'No Image Selected',
-        description: 'Please upload an image to analyze.',
-      });
-      return;
-    }
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const resetState = useCallback(() => {
+    setIsLoading(false);
+    setAnalysisResult(null);
+    setImageToAnalyze(null);
+    setIsVideoProcessed(false);
+  }, []);
+
+  const handleAnalyze = useCallback(async () => {
     setIsLoading(true);
     setAnalysisResult(null);
+    setImageToAnalyze(CROWD_DATA_IMAGE_URL);
+
     try {
       // Fetch the image and convert to data URI
-      const response = await fetch(selectedImage);
+      const response = await fetch(CROWD_DATA_IMAGE_URL);
       const blob = await response.blob();
       const reader = new FileReader();
       reader.readAsDataURL(blob);
@@ -50,11 +60,11 @@ export default function CrowdHotspotsPage() {
                 title: 'Analysis Failed',
                 description: 'There was a problem communicating with the AI model.',
              });
+             resetState();
           } finally {
              setIsLoading(false);
           }
       };
-
     } catch (error) {
       console.error('Failed to fetch or process image', error);
       toast({
@@ -62,10 +72,45 @@ export default function CrowdHotspotsPage() {
         title: 'Image Load Failed',
         description: 'Could not load the image from the provided URL.',
       });
-      setIsLoading(false);
+      resetState();
     }
-  };
+  }, [toast, resetState]);
 
+
+  useEffect(() => {
+    if (!isClient) return;
+
+    const checkVideoStatus = () => {
+      const processed = localStorage.getItem('isVideoProcessed') === 'true';
+      if (processed && !isVideoProcessed) {
+        setIsVideoProcessed(true);
+        toast({
+          title: 'Analysis Starting',
+          description: 'Generating crowd chart analysis. This will take about 20 seconds.',
+        });
+        const timer = setTimeout(() => {
+          handleAnalyze();
+        }, 20000); 
+        return () => clearTimeout(timer);
+      } else if (!processed && isVideoProcessed) {
+        resetState();
+      }
+    };
+
+    checkVideoStatus();
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'isVideoProcessed') {
+        checkVideoStatus();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+
+  }, [isClient, isVideoProcessed, handleAnalyze, resetState, toast]);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -89,17 +134,48 @@ export default function CrowdHotspotsPage() {
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-1">
+            <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Chart Analysis</CardTitle>
-                        <CardDescription>Analyze an image to get an AI summary about crowd gathering.</CardDescription>
+                        <CardTitle>Generated Crowd Chart</CardTitle>
+                        <CardDescription>Visual representation of crowd data.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent>
                         <div className="relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-md border-muted-foreground/50 bg-muted aspect-video">
-                            <ImageIcon className="w-16 h-16 text-muted-foreground" />
-                            <p className="mt-2 text-center text-muted-foreground">Charts will be generated after a video is uploaded</p>
+                            {imageToAnalyze ? (
+                                <Image src={imageToAnalyze} alt="Crowd Data Chart" layout="fill" objectFit="contain" />
+                            ) : (
+                                <>
+                                    <ImageIcon className="w-16 h-16 text-muted-foreground" />
+                                    <p className="mt-2 text-center text-muted-foreground">Charts will be generated after a video is uploaded</p>
+                                </>
+                            )}
                         </div>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>AI Analysis</CardTitle>
+                        <CardDescription>AI-generated summary of the chart.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-center min-h-[300px]">
+                        {isLoading ? (
+                            <div className="flex flex-col items-center text-center">
+                                <Loader2 className="w-12 h-12 mb-4 animate-spin text-primary" />
+                                <p className="font-semibold">Analyzing Chart...</p>
+                                <p className="text-sm text-muted-foreground">Please wait a moment.</p>
+                            </div>
+                        ) : analysisResult ? (
+                            <div className="w-full space-y-4 text-sm">
+                                <p>{analysisResult}</p>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center text-center text-muted-foreground">
+                                <Sparkles className="w-12 h-12 mb-4" />
+                                <p className="font-semibold">No analysis to display.</p>
+                                <p className="text-sm">Output will be generated after a video is uploaded.</p>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
