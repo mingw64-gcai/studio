@@ -153,7 +153,7 @@ export default function CrowdHotspotsPage() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-t-[10px] border-t-[#34A853] border-b-0 border-l-0 border-r-0">
                     <CardHeader>
                         <CardTitle>AI Analysis</CardTitle>
                         <CardDescription>AI-generated summary of the chart.</CardDescription>
