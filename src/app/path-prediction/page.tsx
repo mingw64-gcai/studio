@@ -54,10 +54,6 @@ export default function PathPredictionPage() {
     }, 3000);
   };
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <Sidebar />
