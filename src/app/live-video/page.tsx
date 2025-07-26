@@ -19,24 +19,6 @@ type JobStatus = 'idle' | 'processing' | 'success' | 'error';
 
 const PROCESSED_VIDEO_URL = "https://res.cloudinary.com/dtwt3cwfo/video/upload/v1753539347/crowd_analysis/job_20250726_164055_e62f7ced/processed_video_ahe73z.mkv";
 
-// Helper to convert data URL to File object
-const dataURLtoFile = (dataurl: string, filename: string) => {
-    const arr = dataurl.split(',');
-    const mimeMatch = arr[0].match(/:(.*?);/);
-    if (!mimeMatch) {
-        return null;
-    }
-    const mime = mimeMatch[1];
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new File([u8arr], filename, { type: mime });
-}
-
-
 export default function LiveVideoPage() {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -55,14 +37,11 @@ export default function LiveVideoPage() {
     if (isClient) {
         const savedStatus = localStorage.getItem('videoStatus') as JobStatus;
         const savedProcessedUrl = localStorage.getItem('processedVideoUrl');
-        const savedInputVideoData = localStorage.getItem('inputVideoData');
-        const savedInputVideoName = localStorage.getItem('inputVideoName');
-
+        
         if (savedStatus) setStatus(savedStatus);
-        if (savedProcessedUrl) setProcessedVideoUrl(savedProcessedUrl);
-        if (savedInputVideoData && savedInputVideoName) {
-            const file = dataURLtoFile(savedInputVideoData, savedInputVideoName);
-            setSelectedFile(file);
+        if (savedProcessedUrl) {
+            setProcessedVideoUrl(savedProcessedUrl);
+            setStatus('success'); // If there is a processed URL, status should be success
         }
     }
   }, [isClient]);
@@ -79,23 +58,14 @@ export default function LiveVideoPage() {
     localStorage.removeItem('isVideoProcessed');
     localStorage.removeItem('videoStatus');
     localStorage.removeItem('processedVideoUrl');
-    localStorage.removeItem('inputVideoData');
-    localStorage.removeItem('inputVideoName');
   }, []);
 
   const handleFileChange = (file: File | null) => {
     if (file) {
         if (file.type.startsWith('video/')) {
-            resetState();
+            // We don't call resetState here anymore to keep the processed video visible
+            // until a new analysis is started.
             setSelectedFile(file);
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if(e.target?.result) {
-                    localStorage.setItem('inputVideoData', e.target.result as string);
-                    localStorage.setItem('inputVideoName', file.name);
-                }
-            };
-            reader.readAsDataURL(file);
         } else {
             toast({
                 variant: 'destructive',
@@ -143,12 +113,15 @@ export default function LiveVideoPage() {
       });
       return;
     }
+    
+    // Clear previous results before starting a new analysis
+    setProcessedVideoUrl(null);
+    localStorage.removeItem('processedVideoUrl');
+    localStorage.removeItem('isVideoProcessed');
 
     setStatus('processing');
     localStorage.setItem('videoStatus', 'processing');
     setError(null);
-    setProcessedVideoUrl(null);
-    localStorage.removeItem('processedVideoUrl');
     
     toast({
         title: 'Video Sent to Backend',
@@ -269,7 +242,7 @@ export default function LiveVideoPage() {
                                 <Upload className="mr-2 h-4 w-4" />
                                 {selectedFile ? "Change Video" : "Select Video"}
                             </Button>
-                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading || status === 'success'}>
+                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading}>
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -334,3 +307,5 @@ export default function LiveVideoPage() {
     </div>
   );
 }
+
+    
