@@ -91,7 +91,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
         </Link>
         {navLinks.map(renderLink)}
          <div className="mt-auto">
-            <Button onClick={handleSosClick} variant="destructive" className="w-full text-lg font-bold">
+            <Button onClick={handleSosClick} variant="destructive" className="w-full text-lg font-bold h-14">
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 SOS
             </Button>
@@ -120,7 +120,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
             </div>
         </nav>
         <div className="mt-auto p-4">
-             <Button onClick={handleSosClick} variant="destructive" className="w-full text-lg font-bold">
+             <Button onClick={handleSosClick} variant="destructive" className="w-full text-lg font-bold h-14">
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 SOS
             </Button>
