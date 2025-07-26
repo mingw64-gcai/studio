@@ -88,7 +88,7 @@ export function CrowdProblemSolver() {
                 onClick={handleClear} 
                 variant="outline" 
                 disabled={isLoading}
-                className="hover:bg-green-500/10 hover:border-green-500/50 hover:text-green-700"
+                className="hover:bg-green-500/10 hover:border-green-500/50 hover:text-[hsl(var(--chart-4))]"
             >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Clear
