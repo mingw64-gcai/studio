@@ -12,35 +12,25 @@ import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import Papa from 'papaparse';
 
 const API_BASE_URL = 'https://0f2b00637027.ngrok-free.app';
-const CSV_POLL_URL = 'https://res.cloudinary.com/dtwt3cwfo/raw/upload/v1753528346/crowd_analysis/job_20250726_164055_e62f7ced/crowd_data.csv';
 
-type JobStatus = 'idle' | 'uploading' | 'processing' | 'completed' | 'error';
+type JobStatus = 'idle' | 'uploading' | 'error' | 'sent';
 
 export default function LiveVideoPage() {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [status, setStatus] = useState<JobStatus>('idle');
   const [error, setError] = useState<string | null>(null);
-  const [resultVideoUrl, setResultVideoUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const resetState = () => {
     setSelectedFile(null);
     setStatus('idle');
     setError(null);
-    setResultVideoUrl(null);
     if(fileInputRef.current) {
         fileInputRef.current.value = "";
-    }
-    if(pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
     }
   }
 
@@ -87,53 +77,6 @@ export default function LiveVideoPage() {
     fileInputRef.current?.click();
   };
   
-  const pollForResults = () => {
-      pollIntervalRef.current = setInterval(async () => {
-          try {
-              const response = await fetch(CSV_POLL_URL);
-              if (!response.ok) {
-                  // Don't throw error, just continue polling
-                  console.warn(`Polling failed with status ${response.status}`);
-                  return;
-              }
-              const csvText = await response.text();
-              
-              Papa.parse(csvText, {
-                  header: true,
-                  complete: (results) => {
-                      // Assuming the CSV has `status` and `output_video_url` columns
-                      // And we are interested in the last row.
-                      const lastResult: any = results.data[results.data.length - 1];
-                      if(lastResult && lastResult.status === 'completed' && lastResult.output_video_url) {
-                          setResultVideoUrl(lastResult.output_video_url);
-                          setStatus('completed');
-                          toast({
-                              title: "Analysis Complete!",
-                              description: "The processed video is now available."
-                          })
-                          if(pollIntervalRef.current) {
-                            clearInterval(pollIntervalRef.current);
-                            pollIntervalRef.current = null;
-                          }
-                      }
-                  }
-              });
-
-          } catch (e) {
-              console.error("Polling error:", e);
-              // Don't stop polling on fetch error
-          }
-      }, 5000); // Poll every 5 seconds
-  }
-
-  useEffect(() => {
-      return () => {
-          if (pollIntervalRef.current) {
-              clearInterval(pollIntervalRef.current);
-          }
-      }
-  }, []);
-
   const handleAnalyzeClick = async () => {
     if (!selectedFile) {
       toast({
@@ -163,10 +106,9 @@ export default function LiveVideoPage() {
       
       toast({
         title: 'Video Sent for Analysis',
-        description: `Your video is being processed. Results will appear here when ready.`,
+        description: `Your video has been sent to the backend.`,
       });
-      setStatus('processing');
-      pollForResults();
+      setStatus('sent');
 
     } catch (e: any) {
       console.error('Analysis failed:', e);
@@ -181,22 +123,9 @@ export default function LiveVideoPage() {
     }
   };
   
-  const isLoading = status === 'uploading' || status === 'processing';
+  const isLoading = status === 'uploading';
 
   const renderVideoContent = () => {
-    if (resultVideoUrl) {
-        return (
-            <div className='aspect-video w-full'>
-                <video 
-                    src={resultVideoUrl} 
-                    controls 
-                    autoPlay
-                    className="w-full h-full rounded-md" 
-                />
-            </div>
-        );
-    }
-
     if (selectedFile) {
          return (
             <div className='aspect-video w-full'>
@@ -271,21 +200,21 @@ export default function LiveVideoPage() {
                            {isLoading && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 rounded-md">
                                     <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                                    <p className="mt-4 text-lg font-semibold">{status === 'uploading' ? 'Sending Video...' : 'Processing Video...'}</p>
-                                    <p className="text-sm text-muted-foreground">{status === 'processing' ? 'This may take several minutes.' : 'Please wait.'}</p>
+                                    <p className="mt-4 text-lg font-semibold">Sending Video...</p>
+                                    <p className="text-sm text-muted-foreground">Please wait.</p>
                                 </div>
                             )}
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
-                             <Button onClick={handleUploadClick} variant="outline" disabled={isLoading || !!resultVideoUrl}>
+                             <Button onClick={handleUploadClick} variant="outline" disabled={isLoading || status === 'sent'}>
                                 <Upload className="mr-2 h-4 w-4" />
                                 {selectedFile ? "Change Video" : "Select Video"}
                             </Button>
-                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading || !!resultVideoUrl}>
+                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading || status === 'sent'}>
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        {status === 'uploading' ? 'Sending...' : 'Processing...'}
+                                        Sending...
                                     </>
                                 ) : (
                                     <>
@@ -294,16 +223,16 @@ export default function LiveVideoPage() {
                                     </>
                                 )}
                             </Button>
-                            {(selectedFile || resultVideoUrl) && (
+                            {(selectedFile) && (
                                 <Button onClick={resetState} variant="ghost" disabled={isLoading}>
                                     <RefreshCw className="mr-2 h-4 w-4" />
                                     Clear
                                 </Button>
                             )}
-                            {status === 'processing' && (
-                                <div className="flex items-center text-sm text-muted-foreground">
-                                    <AlertCircle className="mr-2 h-4 w-4 text-primary" />
-                                    <span>Analysis in progress. Results will appear automatically.</span>
+                            {status === 'sent' && (
+                                <div className="flex items-center text-sm text-green-600">
+                                    <AlertCircle className="mr-2 h-4 w-4" />
+                                    <span>Video sent successfully. You can upload another.</span>
                                 </div>
                             )}
                         </div>
