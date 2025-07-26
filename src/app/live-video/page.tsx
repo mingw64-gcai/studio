@@ -268,7 +268,7 @@ export default function LiveVideoPage() {
                                 ) : (
                                     <>
                                         <FileVideo2 className="w-16 h-16 text-muted-foreground" />
-                                        <p className="mt-2 text-center">Output will appear here</p>
+                                        <p className="mt-2 text-center">Output will be generated after a video is Uploaded</p>
                                     </>
                                 )}
                             </div>
