@@ -129,7 +129,7 @@ export default function CrowdHotspotsPage() {
               </SheetContent>
             </Sheet>
             <div className="flex-1">
-                <h1 className="text-xl font-semibold">Chart Analysis</h1>
+                <h1 className="text-xl font-semibold text-right">Chart Analysis</h1>
             </div>
             <UserNav />
         </header>
