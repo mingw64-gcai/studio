@@ -16,6 +16,7 @@ import { solveCrowdProblem, SolveCrowdProblemOutput } from '@/ai/flows/solve-cro
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
 import ReactMarkdown from 'react-markdown';
+import { cn } from '@/lib/utils';
 
 export function CrowdProblemSolver() {
   const { toast } = useToast();
@@ -83,7 +84,12 @@ export function CrowdProblemSolver() {
             )}
             Find Solution
             </Button>
-            <Button onClick={handleClear} variant="outline" disabled={isLoading}>
+            <Button 
+                onClick={handleClear} 
+                variant="outline" 
+                disabled={isLoading}
+                className="hover:bg-green-500/10 hover:border-green-500/50 hover:text-green-700"
+            >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Clear
             </Button>
@@ -101,12 +107,12 @@ export function CrowdProblemSolver() {
               <div className="space-y-4 text-sm">
                 <div>
                     <h3 className="font-semibold text-foreground">Problem Analysis</h3>
-                    <ReactMarkdown className="text-sm prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">{result.analysis}</ReactMarkdown>
+                    <ReactMarkdown className="prose-sm max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-li:text-foreground">{result.analysis}</ReactMarkdown>
                 </div>
                 <Separator />
                  <div>
                     <h3 className="font-semibold text-foreground">Suggested Solution</h3>
-                    <ReactMarkdown className="text-sm prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">{result.solution}</ReactMarkdown>
+                    <ReactMarkdown className="prose-sm max-w-none text-foreground prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-li:text-foreground">{result.solution}</ReactMarkdown>
                 </div>
               </div>
             )}
