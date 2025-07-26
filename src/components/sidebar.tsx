@@ -3,10 +3,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, LineChart, ImageIcon, Map, Footprints, UserSearch, Video } from 'lucide-react'
+import { Home, LineChart, ImageIcon, Map, Footprints, UserSearch, Video, AlertTriangle } from 'lucide-react'
 
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
+import { Button } from './ui/button'
 
 const navLinks = [
   { href: '/', label: 'Dashboard', icon: Home },
@@ -59,28 +60,42 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
           <span className="sr-only">Drishti AI</span>
         </Link>
         {navLinks.map(renderLink)}
+         <div className="mt-auto">
+            <Button variant="destructive" className="w-full">
+                <AlertTriangle className="mr-2 h-4 w-4" />
+                SOS
+            </Button>
+        </div>
       </nav>
     )
   }
 
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col gap-4 px-4 sm:py-5">
-        <div className="flex flex-col items-center gap-2">
-            <Link href="/" className="group flex items-center justify-center">
-                <Icons.logo className="h-20 w-20 transition-all group-hover:scale-110" />
-            </Link>
-            <div
-            className="group flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-primary-foreground"
-            >
-            <span className="whitespace-nowrap text-xl font-bold">Drishti AI</span>
+      <div className="flex h-full flex-col">
+        <nav className="flex flex-col gap-4 px-4 sm:py-5">
+            <div className="flex flex-col items-center gap-2">
+                <Link href="/" className="group flex items-center justify-center">
+                    <Icons.logo className="h-20 w-20 transition-all group-hover:scale-110" />
+                </Link>
+                <div
+                className="group flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-primary-foreground"
+                >
+                <span className="whitespace-nowrap text-xl font-bold">Drishti AI</span>
+                </div>
+                <span className="font-semibold whitespace-nowrap text-sm">Mingw64</span>
             </div>
-            <span className="font-semibold whitespace-nowrap text-sm">Mingw64</span>
+            <div className="flex flex-col gap-y-2">
+                {navLinks.map(renderLink)}
+            </div>
+        </nav>
+        <div className="mt-auto p-4">
+             <Button variant="destructive" className="w-full">
+                <AlertTriangle className="mr-2 h-4 w-4" />
+                SOS
+            </Button>
         </div>
-        <div className="flex flex-col gap-y-2">
-            {navLinks.map(renderLink)}
-        </div>
-      </nav>
+      </div>
     </aside>
   )
 }
