@@ -13,8 +13,9 @@ import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
-const API_BASE_URL = 'http://localhost:5000'; // As per the documentation
+const API_BASE_URL = 'https://625a1df66bd0.ngrok-free.app'; // As per the documentation
 
 type JobStatus = 'queued' | 'processing' | 'completed' | 'failed' | null;
 type AvailableFile = {
@@ -33,6 +34,7 @@ export default function LiveVideoPage() {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [resultFiles, setResultFiles] = useState<Record<string, AvailableFile> | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -91,11 +93,43 @@ export default function LiveVideoPage() {
     return () => clearInterval(interval);
   }, [jobId, status, toast]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-        resetState();
-        setSelectedFile(event.target.files[0]);
+  const handleFileChange = (file: File | null) => {
+    if (file) {
+        if (file.type.startsWith('video/')) {
+            resetState();
+            setSelectedFile(file);
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Invalid File Type',
+                description: 'Please upload a valid video file.',
+            });
+        }
     }
+  };
+
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      handleFileChange(event.target.files[0]);
+    }
+  };
+  
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsDragging(true);
+  };
+  
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsDragging(false);
+  };
+  
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setIsDragging(false);
+      if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+          handleFileChange(event.dataTransfer.files[0]);
+      }
   };
 
   const handleUploadClick = () => {
@@ -280,7 +314,16 @@ export default function LiveVideoPage() {
                         <CardDescription>Upload a video to analyze for crowd behavior.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-md border-muted-foreground/50 bg-muted">
+                        <div 
+                            className={cn(
+                                "relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-md border-muted-foreground/50 bg-muted cursor-pointer transition-colors",
+                                {"bg-primary/10 border-primary": isDragging}
+                            )}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            onClick={handleUploadClick}
+                        >
                             <FileVideo className="w-16 h-16 text-muted-foreground" />
                             {selectedFile ? (
                                 <p className="mt-2 text-center">{selectedFile.name}</p>
@@ -290,7 +333,7 @@ export default function LiveVideoPage() {
                              <Input
                                 type="file"
                                 ref={fileInputRef}
-                                onChange={handleFileChange}
+                                onChange={handleFileInputChange}
                                 className="hidden"
                                 accept="video/mp4,video/avi,video/mov,video/mkv"
                                 disabled={!!jobId && status !== 'completed' && status !== 'failed'}
@@ -324,6 +367,3 @@ export default function LiveVideoPage() {
     </div>
   );
 }
-
-    
-    
