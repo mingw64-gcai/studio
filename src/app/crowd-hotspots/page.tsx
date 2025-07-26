@@ -117,7 +117,7 @@ export default function CrowdHotspotsPage() {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <Sidebar />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:bg-transparent sm:px-6">
             <Sheet>
               <SheetTrigger asChild>
                 <Button size="icon" variant="outline" className="sm:hidden">
@@ -130,13 +130,13 @@ export default function CrowdHotspotsPage() {
               </SheetContent>
             </Sheet>
             <div className="flex-1">
-                <h1 className="text-2xl font-bold text-right">Chart Analysis</h1>
+                <h1 className="text-3xl font-bold">Chart Analysis</h1>
             </div>
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
             <div className="grid gap-4 md:grid-cols-2">
-                <Card className="border-t-[10px] border-t-[#EA4335] border-b-0 border-l-0 border-r-0">
+                <Card>
                     <CardHeader>
                         <CardTitle>Generated Crowd Chart</CardTitle>
                         <CardDescription>Visual representation of crowd data.</CardDescription>
@@ -154,7 +154,7 @@ export default function CrowdHotspotsPage() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="border-t-[10px] border-t-[#34A853] border-b-0 border-l-0 border-r-0">
+                <Card>
                     <CardHeader>
                         <CardTitle>AI Analysis</CardTitle>
                         <CardDescription>AI-generated summary of the chart.</CardDescription>
