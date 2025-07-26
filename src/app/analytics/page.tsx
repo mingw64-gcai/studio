@@ -16,12 +16,12 @@ import { PanelLeft, BarChart2 } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 
 const chartData = [
-  { month: 'January', alerts: 12 },
   { month: 'February', alerts: 15 },
   { month: 'March', alerts: 8 },
   { month: 'April', alerts: 22 },
   { month: 'May', alerts: 18 },
   { month: 'June', alerts: 30 },
+  { month: 'July', alerts: 25 },
 ];
 
 const chartConfig = {
@@ -67,7 +67,7 @@ export default function AnalyticsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>High-Density Alerts</CardTitle>
-                    <CardDescription>Alerts triggered per month (January - June 2024)</CardDescription>
+                    <CardDescription>Alerts triggered per month (February - July 2025)</CardDescription>
                 </CardHeader>
                 <CardContent className="flex items-center justify-center min-h-[400px]">
                     {isLoading ? (
