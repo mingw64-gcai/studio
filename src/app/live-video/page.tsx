@@ -123,7 +123,7 @@ export default function LiveVideoPage() {
       toast({
         variant: 'destructive',
         title: 'Analysis Failed',
-        description: e.message || 'Could not process the video.',
+        description: e.message || 'Could not process the video. Check the browser console and ensure the backend server is running correctly.',
       });
     } finally {
         setIsLoading(false);
