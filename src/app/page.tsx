@@ -20,6 +20,7 @@ export default function Dashboard() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [threatLevel, setThreatLevel] = useState<ThreatLevel>('Low');
+  const [faceCount, setFaceCount] = useState(0);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -30,6 +31,8 @@ export default function Dashboard() {
   if (!isAuthenticated) {
     return null; // Or a loading spinner
   }
+  
+  const density = Math.min((faceCount / 4) * 100, 100);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -53,10 +56,10 @@ export default function Dashboard() {
           <UserNav />
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-           <MetricsCards threatLevel={threatLevel} />
+           <MetricsCards threatLevel={threatLevel} density={density} />
            <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <div className="grid auto-rows-max items-start gap-4 md:gap-8 xl:col-span-2">
-                 <VideoFeed setThreatLevel={setThreatLevel} />
+                 <VideoFeed setThreatLevel={setThreatLevel} setFaceCount={setFaceCount} />
                  <CrowdProblemSolver />
               </div>
               <div className="grid auto-rows-max items-start gap-4 md:gap-8">

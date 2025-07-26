@@ -21,9 +21,10 @@ import type { ThreatLevel } from '@/app/page';
 
 interface VideoFeedProps {
   setThreatLevel: (level: ThreatLevel) => void;
+  setFaceCount: (count: number) => void;
 }
 
-export function VideoFeed({ setThreatLevel }: VideoFeedProps) {
+export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
   const { toast } = useToast();
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +49,7 @@ export function VideoFeed({ setThreatLevel }: VideoFeedProps) {
 
     try {
       const { faceCount } = await countFacesInImage({ imageDataUri: frameDataUri });
+      setFaceCount(faceCount);
 
       if (faceCount >= 3) {
         setThreatLevel('High');
@@ -60,7 +62,7 @@ export function VideoFeed({ setThreatLevel }: VideoFeedProps) {
       console.error('Face count analysis failed', error);
       // Don't show a toast here, as it would be annoying every 5 seconds.
     }
-  }, [setThreatLevel]);
+  }, [setThreatLevel, setFaceCount]);
 
   useEffect(() => {
     const getCameraPermission = async () => {

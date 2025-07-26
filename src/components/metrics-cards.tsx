@@ -12,9 +12,10 @@ import { cn } from "@/lib/utils";
 
 interface MetricsCardsProps {
   threatLevel: ThreatLevel;
+  density: number;
 }
 
-export function MetricsCards({ threatLevel }: MetricsCardsProps) {
+export function MetricsCards({ threatLevel, density }: MetricsCardsProps) {
 
   const threatLevelConfig = {
     'Low': {
@@ -34,6 +35,16 @@ export function MetricsCards({ threatLevel }: MetricsCardsProps) {
     }
   }
   const currentThreat = threatLevelConfig[threatLevel];
+  
+  const getDensityColor = (percentage: number) => {
+    if (percentage >= 75) {
+      return 'text-destructive'; // Red
+    } else if (percentage >= 50) {
+      return 'text-[hsl(var(--chart-3))]'; // Yellow
+    } else {
+      return 'text-green-600'; // Green
+    }
+  };
 
 
   return (
@@ -41,11 +52,11 @@ export function MetricsCards({ threatLevel }: MetricsCardsProps) {
       <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>Current Density</CardDescription>
-          <CardTitle className="text-4xl text-[hsl(var(--chart-3))]">75%</CardTitle>
+          <CardTitle className={cn("text-4xl", getDensityColor(density))}>{density.toFixed(0)}%</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">
-            +10% from last hour
+            Based on face count
           </div>
         </CardContent>
       </Card>
