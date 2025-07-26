@@ -13,28 +13,26 @@ import { cn } from "@/lib/utils";
 interface MetricsCardsProps {
   threatLevel: ThreatLevel;
   density: number;
+  alertCount: number;
 }
 
-export function MetricsCards({ threatLevel, density }: MetricsCardsProps) {
+export function MetricsCards({ threatLevel, density, alertCount }: MetricsCardsProps) {
 
   const threatLevelConfig = {
     'Low': {
       text: 'Low',
       color: 'text-green-600',
       description: 'No immediate threats detected',
-      alerts: 1,
     },
     'Moderate': {
       text: 'Moderate',
       color: 'text-[hsl(var(--chart-3))]',
       description: 'Minor anomalies detected',
-      alerts: 3,
     },
     'High': {
       text: 'High',
       color: 'text-destructive',
       description: 'Anomalous patterns detected',
-      alerts: 5,
     }
   }
   const currentThreat = threatLevelConfig[threatLevel];
@@ -59,17 +57,10 @@ export function MetricsCards({ threatLevel, density }: MetricsCardsProps) {
     }
   }
   
-  const getAlertsDescription = (level: ThreatLevel) => {
-    switch (level) {
-      case 'Low':
-        return '1 low priority';
-      case 'Moderate':
-        return '2 medium, 1 low priority';
-      case 'High':
-        return '3 high, 2 medium priority';
-      default:
-        return '';
-    }
+  const getAlertsDescription = (count: number) => {
+    if (count === 0) return "No density breaches yet."
+    if (count === 1) return "1 density breach in last 5 min."
+    return `${count} density breaches in last 5 min.`
   }
 
 
@@ -100,13 +91,13 @@ export function MetricsCards({ threatLevel, density }: MetricsCardsProps) {
       <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>Active Alerts</CardDescription>
-          <CardTitle className={cn("text-4xl", getAlertColor(currentThreat.alerts))}>
-            {currentThreat.alerts}
+          <CardTitle className={cn("text-4xl", getAlertColor(alertCount))}>
+            {alertCount}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">
-            {getAlertsDescription(threatLevel)}
+            {getAlertsDescription(alertCount)}
           </div>
         </CardContent>
       </Card>

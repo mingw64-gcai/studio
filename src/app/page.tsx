@@ -12,7 +12,7 @@ import { PanelLeft } from 'lucide-react'
 import { CrowdProblemSolver } from '@/components/crowd-problem-solver'
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export type ThreatLevel = 'Low' | 'Moderate' | 'High';
 
@@ -21,6 +21,8 @@ export default function Dashboard() {
   const router = useRouter();
   const [threatLevel, setThreatLevel] = useState<ThreatLevel>('Low');
   const [faceCount, setFaceCount] = useState(0);
+  const [alertCount, setAlertCount] = useState(0);
+  const prevDensityRef = useRef(0);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,12 +30,27 @@ export default function Dashboard() {
     }
   }, [isAuthenticated, router]);
 
+  const density = Math.min((faceCount / 4) * 100, 100);
+
+  useEffect(() => {
+    if (prevDensityRef.current < 50 && density >= 50) {
+        setAlertCount(prevCount => prevCount + 1);
+    }
+    prevDensityRef.current = density;
+  }, [density]);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+        setAlertCount(0);
+    }, 300000); // 300 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   if (!isAuthenticated) {
     return null; // Or a loading spinner
   }
   
-  const density = Math.min((faceCount / 4) * 100, 100);
-
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Sidebar />
@@ -56,7 +73,7 @@ export default function Dashboard() {
           <UserNav />
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-           <MetricsCards threatLevel={threatLevel} density={density} />
+           <MetricsCards threatLevel={threatLevel} density={density} alertCount={alertCount} />
            <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <div className="grid auto-rows-max items-start gap-4 md:gap-8 xl:col-span-2">
                  <VideoFeed setThreatLevel={setThreatLevel} setFaceCount={setFaceCount} />
