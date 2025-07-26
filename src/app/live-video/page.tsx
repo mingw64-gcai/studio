@@ -229,12 +229,9 @@ export default function LiveVideoPage() {
                        <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
                         {status === 'success' && processedVideoUrl ? (
                             <video
-                                key={processedVideoUrl}
                                 src={processedVideoUrl}
                                 controls
                                 autoPlay
-                                muted
-                                playsInline
                                 className="w-full h-full rounded-md"
                             />
                         ) : (
