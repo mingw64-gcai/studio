@@ -245,7 +245,7 @@ export default function LiveVideoPage() {
                     <CardContent>
                        <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
                         {status === 'success' && processedVideoUrl ? (
-                            <video key={processedVideoUrl} src={processedVideoUrl} controls autoPlay className="w-full h-full rounded-md" />
+                            <video key={processedVideoUrl} src={processedVideoUrl} controls autoPlay muted playsInline className="w-full h-full rounded-md" />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                                 {isLoading ? (
