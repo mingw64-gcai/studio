@@ -27,6 +27,10 @@ export function UserNav() {
     logout();
     router.push('/login');
   };
+  
+  const handleProfileClick = () => {
+    router.push('/profile');
+  };
 
   return (
     <>
@@ -54,7 +58,7 @@ export function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={handleProfileClick}>
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>

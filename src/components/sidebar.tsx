@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, LineChart, ImageIcon, Footprints, UserSearch, Video, AlertTriangle } from 'lucide-react'
+import { Home, LineChart, ImageIcon, Footprints, UserSearch, Video, AlertTriangle, User as ProfileIcon } from 'lucide-react'
 
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
@@ -59,6 +59,8 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
   const activeLinkClasses = "bg-[hsl(var(--chart-4))] text-primary-foreground hover:text-primary-foreground/90";
   const sheetLinkClasses = "gap-4 px-2.5";
   const sheetActiveLinkClasses = "text-foreground";
+  
+  const isProfileActive = pathname === '/profile';
 
   const renderLink = (link: typeof navLinks[0]) => {
      const isActive = pathname === link.href;
@@ -89,7 +91,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
           <span className="sr-only">Drishti AI</span>
         </Link>
         {navLinks.map(renderLink)}
-         <div className="mt-auto">
+        <div className="mt-auto">
             <Button onClick={handleSosClick} variant="destructive" className="w-full text-lg font-bold h-14">
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 SOS
@@ -116,6 +118,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
             </div>
             <div className="flex flex-col gap-y-2">
                 {navLinks.map(renderLink)}
+                {/* Special handling for profile link if needed, or add it to navLinks */}
             </div>
         </nav>
         <div className="mt-auto p-4">
