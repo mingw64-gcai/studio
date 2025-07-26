@@ -41,7 +41,7 @@ export default function LiveVideoPage() {
         if (savedStatus) setStatus(savedStatus);
         if (savedProcessedUrl) {
             setProcessedVideoUrl(savedProcessedUrl);
-            setStatus('success'); // If there is a processed URL, status should be success
+            setStatus('success');
         }
     }
   }, [isClient]);
@@ -216,7 +216,7 @@ export default function LiveVideoPage() {
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
             <div className="grid gap-4 md:grid-cols-1">
-                <Card style={{ borderColor: '#EA4335' }}>
+                <Card className="border-t-4 border-t-[#EA4335] border-b-0 border-l-0 border-r-0">
                     <CardHeader>
                         <CardTitle>Input Video</CardTitle>
                         <CardDescription>
