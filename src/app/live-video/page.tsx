@@ -93,8 +93,7 @@ export default function LiveVideoPage() {
 
     setIsLoading(true);
     setError(null);
-    setResultVideoUrl(null);
-
+    
     try {
       const response = await fetch(`${API_BASE_URL}/analyze/video`, {
         method: 'POST',
@@ -109,21 +108,19 @@ export default function LiveVideoPage() {
           throw new Error(err.error || `Analysis failed with status ${response.status}`);
       }
       
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      setResultVideoUrl(url);
-
       toast({
-        title: 'Analysis Complete',
-        description: `Your video has been processed successfully.`,
+        title: 'Video Sent',
+        description: `Your video has been sent to the backend for processing.`,
       });
+      // Reset after successful submission, as we are not expecting a result video
+      resetState();
     } catch (e: any) {
       console.error('Analysis failed:', e);
-      const errorMessage = e.message || 'Could not process the video. Check the browser console and ensure the backend server is running correctly.';
+      const errorMessage = e.message || 'Could not send the video. Check the browser console and ensure the backend server is running correctly.';
       setError(errorMessage);
       toast({
         variant: 'destructive',
-        title: 'Analysis Failed',
+        title: 'Submission Failed',
         description: errorMessage,
       });
     } finally {
@@ -208,11 +205,9 @@ export default function LiveVideoPage() {
             <div className="grid gap-4 md:grid-cols-1">
                 <Card>
                     <CardHeader>
-                        <CardTitle>{resultVideoUrl ? 'Analysis Result' : 'Video Upload'}</CardTitle>
+                        <CardTitle>Video Upload</CardTitle>
                         <CardDescription>
-                            {resultVideoUrl 
-                                ? 'The processed video is available below.' 
-                                : 'Upload a video to analyze for crowd behavior.'}
+                            Upload a video to send for backend analysis.
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -221,7 +216,7 @@ export default function LiveVideoPage() {
                            {isLoading && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 rounded-md">
                                     <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                                    <p className="mt-4 text-lg font-semibold">Analyzing Video...</p>
+                                    <p className="mt-4 text-lg font-semibold">Sending Video...</p>
                                     <p className="text-sm text-muted-foreground">This may take a few moments.</p>
                                 </div>
                             )}
@@ -236,19 +231,19 @@ export default function LiveVideoPage() {
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Processing...
+                                        Sending...
                                     </>
                                 ) : (
                                     <>
                                         <Sparkles className="mr-2 h-4 w-4" />
-                                        Analyze
+                                        Send for Analysis
                                     </>
                                 )}
                             </Button>
                             {(selectedFile || resultVideoUrl) && (
                                 <Button onClick={resetState} variant="ghost" disabled={isLoading}>
                                     <RefreshCw className="mr-2 h-4 w-4" />
-                                    Start New Analysis
+                                    Clear
                                 </Button>
                             )}
                         </div>
