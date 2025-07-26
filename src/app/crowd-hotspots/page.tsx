@@ -93,7 +93,7 @@ export default function CrowdHotspotsPage() {
             <div className="grid gap-4 md:grid-cols-1">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Image Analysis</CardTitle>
+                        <CardTitle>Chart Analysis</CardTitle>
                         <CardDescription>Analyze the image to get an AI summary about crowd gathering.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
