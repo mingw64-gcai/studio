@@ -4,7 +4,6 @@ import { UserNav } from '@/components/user-nav'
 import { MetricsCards } from '@/components/metrics-cards'
 import { VideoFeed } from '@/components/video-feed'
 import { AlertsPanel } from '@/components/alerts-panel'
-import { AnalysisPanel } from '@/components/analysis-panel'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { PanelLeft } from 'lucide-react'
@@ -42,7 +41,6 @@ export default function Dashboard() {
               </div>
               <div className="grid auto-rows-max items-start gap-4 md:gap-8">
                  <AlertsPanel />
-                 <AnalysisPanel />
               </div>
             </div>
         </main>
