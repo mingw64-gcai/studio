@@ -98,9 +98,6 @@ export default function LiveVideoPage() {
       const response = await fetch(`${API_BASE_URL}/analyze/video`, {
         method: 'POST',
         body: formData,
-        headers: {
-            'ngrok-skip-browser-warning': 'true'
-        }
       });
 
       if (!response.ok) {
