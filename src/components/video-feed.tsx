@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { countFacesInImage } from '@/ai/flows/count-faces-in-image';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import type { ThreatLevel } from '@/app/page';
+import { Badge } from './ui/badge';
 
 interface VideoFeedProps {
   setThreatLevel: (level: ThreatLevel) => void;
@@ -114,6 +115,11 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
       </CardHeader>
       <CardContent>
         <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
+          {hasCameraPermission && (
+            <Badge variant="destructive" className="absolute top-2 left-2 z-10 animate-pulse">
+              LIVE
+            </Badge>
+          )}
            <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
             {hasCameraPermission === false && (
                 <div className="absolute inset-0 flex items-center justify-center p-4">
