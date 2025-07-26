@@ -204,8 +204,8 @@ export default function LostAndFoundPage() {
                     <Sidebar isSheet={true} />
                   </SheetContent>
                 </Sheet>
-                <div className="relative ml-auto flex-1 md:grow-0">
-                    <h1 className="text-xl font-semibold whitespace-nowrap">Lost and Found</h1>
+                <div className="flex-1">
+                    <h1 className="text-2xl font-bold text-right">Lost and Found</h1>
                 </div>
                 <UserNav />
             </header>

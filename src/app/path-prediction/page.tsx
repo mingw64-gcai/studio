@@ -133,8 +133,8 @@ export default function PathPredictionPage() {
                 <Sidebar isSheet={true} />
               </SheetContent>
             </Sheet>
-            <div className="relative ml-auto flex-1 md:grow-0">
-                <h1 className="text-xl font-semibold">Path Prediction</h1>
+            <div className="flex-1">
+                <h1 className="text-2xl font-bold text-right">Path Prediction</h1>
             </div>
             <UserNav />
         </header>
