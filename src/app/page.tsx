@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Sidebar } from '@/components/sidebar'
 import { UserNav } from '@/components/user-nav'
 import { MetricsCards } from '@/components/metrics-cards'
@@ -8,9 +10,25 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { PanelLeft } from 'lucide-react'
 import { CrowdProblemSolver } from '@/components/crowd-problem-solver'
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 
 export default function Dashboard() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null; // Or a loading spinner
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Sidebar />
