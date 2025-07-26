@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Video, CheckCircle, XCircle, FileVideo, PanelLeft, RefreshCw } from 'lucide-react';
+import { Upload, Loader2, Video, CheckCircle, XCircle, FileVideo, PanelLeft, RefreshCw, Sparkles } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
@@ -325,4 +325,5 @@ export default function LiveVideoPage() {
   );
 }
 
+    
     
