@@ -28,7 +28,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
               <div className="flex flex-col min-h-screen">
-                <main className="flex-grow">{children}</main>
+                <main className="flex-grow flex flex-col">{children}</main>
                 <footer className="w-full py-4 text-center text-xs text-muted-foreground">
                   Made with ❤️ by Team Mingw64
                 </footer>
