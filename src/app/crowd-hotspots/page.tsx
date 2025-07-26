@@ -12,7 +12,7 @@ import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
-const IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753528350/crowd_analysis/job_20250726_164055_e62f7ced/heatmap.png.png";
+const IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753528344/crowd_analysis/job_20250726_164055_e62f7ced/crowd%20data.png.png";
 
 export default function CrowdHotspotsPage() {
   const { toast } = useToast();
