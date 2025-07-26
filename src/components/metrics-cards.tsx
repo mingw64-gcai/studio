@@ -13,7 +13,7 @@ export function MetricsCards() {
       <Card>
         <CardHeader className="pb-2">
           <CardDescription>Current Density</CardDescription>
-          <CardTitle className="text-4xl">75%</CardTitle>
+          <CardTitle className="text-4xl text-[hsl(var(--chart-3))]">75%</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">
