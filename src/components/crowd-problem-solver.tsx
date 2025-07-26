@@ -59,7 +59,7 @@ export function CrowdProblemSolver() {
   }
 
   return (
-    <Card className="border-t-8 border-t-accent">
+    <Card className="border-t-8 border-t-[hsl(var(--chart-4))]">
       <CardHeader>
         <CardTitle>Crowd Problem Solver</CardTitle>
         <CardDescription>
@@ -101,12 +101,12 @@ export function CrowdProblemSolver() {
               <div className="space-y-4 text-sm">
                 <div>
                     <h3 className="font-semibold text-foreground">Problem Analysis</h3>
-                    <ReactMarkdown className="prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">{result.analysis}</ReactMarkdown>
+                    <ReactMarkdown className="text-sm prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">{result.analysis}</ReactMarkdown>
                 </div>
                 <Separator />
                  <div>
                     <h3 className="font-semibold text-foreground">Suggested Solution</h3>
-                    <ReactMarkdown className="prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">{result.solution}</ReactMarkdown>
+                    <ReactMarkdown className="text-sm prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">{result.solution}</ReactMarkdown>
                 </div>
               </div>
             )}
