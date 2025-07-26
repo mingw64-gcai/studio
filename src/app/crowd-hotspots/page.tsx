@@ -6,17 +6,15 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Sparkles, PanelLeft } from 'lucide-react';
+import { Loader2, Sparkles, PanelLeft, ImageIcon } from 'lucide-react';
 import { analyzeCrowdImage, AnalyzeCrowdImageOutput } from '@/ai/flows/analyze-crowd-image';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 
-const IMAGE_URL = "https://res.cloudinary.com/dtwt3cwfo/image/upload/v1753528344/crowd_analysis/job_20250726_164055_e62f7ced/crowd%20data.png.png";
-
 export default function CrowdHotspotsPage() {
   const { toast } = useToast();
-  const [selectedImage] = useState<string>(IMAGE_URL);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
 
@@ -94,7 +92,7 @@ export default function CrowdHotspotsPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Chart Analysis</CardTitle>
-                        <CardDescription>Analyze the image to get an AI summary about crowd gathering.</CardDescription>
+                        <CardDescription>Analyze an image to get an AI summary about crowd gathering.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted">
@@ -102,8 +100,8 @@ export default function CrowdHotspotsPage() {
                             <Image src={selectedImage} alt="Selected for analysis" fill style={{objectFit:'contain'}} unoptimized/>
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                                <Loader2 className="h-12 w-12" />
-                                <p>Loading Image...</p>
+                                <ImageIcon className="h-12 w-12" />
+                                <p>No image selected</p>
                             </div>
                         )}
                         {isLoading && (
