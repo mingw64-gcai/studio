@@ -215,7 +215,7 @@ export default function LiveVideoPage() {
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-1">
+            <div className="grid gap-4 md:grid-cols-2">
                 <Card className="border-t-[10px] border-t-[#EA4335] border-b-0 border-l-0 border-r-0">
                     <CardHeader>
                         <CardTitle>Input Video</CardTitle>
