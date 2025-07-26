@@ -27,6 +27,9 @@ export default function LiveVideoPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const resetState = () => {
+    if (processedVideoUrl) {
+      URL.revokeObjectURL(processedVideoUrl);
+    }
     setSelectedFile(null);
     setStatus('idle');
     setError(null);
@@ -98,13 +101,30 @@ export default function LiveVideoPage() {
         description: 'Processing has started. This will take about 15 seconds.',
     });
 
-    setTimeout(() => {
-        setProcessedVideoUrl(PROCESSED_VIDEO_URL);
-        setStatus('success');
-        toast({
-            title: 'Processing Complete',
-            description: 'The processed video is ready.',
-        });
+    setTimeout(async () => {
+        try {
+            const response = await fetch(PROCESSED_VIDEO_URL);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const videoBlob = await response.blob();
+            const blobUrl = URL.createObjectURL(videoBlob);
+            setProcessedVideoUrl(blobUrl);
+            setStatus('success');
+            toast({
+                title: 'Processing Complete',
+                description: 'The processed video is ready.',
+            });
+        } catch(e) {
+            console.error("Failed to fetch processed video:", e);
+            setError("Could not load the processed video from the server.");
+            setStatus('error');
+             toast({
+                variant: 'destructive',
+                title: 'Failed to load video',
+                description: 'There was a problem retrieving the processed video.',
+            });
+        }
     }, 15000);
 
   };
