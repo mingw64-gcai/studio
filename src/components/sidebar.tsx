@@ -68,7 +68,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
       <nav className="flex flex-col gap-4 px-4 sm:py-5">
         <div className="flex flex-col items-center gap-4">
             <Link href="/" className="group flex items-center justify-center">
-                <Icons.logo className="h-16 w-16 transition-all group-hover:scale-110" />
+                <Icons.logo className="h-20 w-20 transition-all group-hover:scale-110" />
             </Link>
             <div
             className="group flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-lg font-semibold text-primary-foreground"
