@@ -36,7 +36,7 @@ export default function AnalyticsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // localStorage is only available in the browser
+    // This effect runs only on the client-side
     const processed = localStorage.getItem('isVideoProcessed') === 'true';
     setIsVideoProcessed(processed);
     setIsLoading(false);
@@ -69,11 +69,11 @@ export default function AnalyticsPage() {
                     <CardTitle>Crowd Density Analytics</CardTitle>
                     <CardDescription>January - June 2024</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex items-center justify-center min-h-[400px]">
                     {isLoading ? (
                         <p>Loading...</p>
                     ) : isVideoProcessed ? (
-                        <ChartContainer config={chartConfig}>
+                        <ChartContainer config={chartConfig} className="w-full h-full">
                             <BarChart accessibilityLayer data={chartData}>
                                 <CartesianGrid vertical={false} />
                                 <XAxis
