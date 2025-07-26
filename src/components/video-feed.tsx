@@ -88,7 +88,7 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
 
     // Start analysis loop when component mounts and permission is granted
     if (hasCameraPermission) {
-        analysisIntervalRef.current = setInterval(analyzeFrame, 5000); // Analyze every 5 seconds
+        analysisIntervalRef.current = setInterval(analyzeFrame, 15000); // Analyze every 15 seconds
     }
     
     // Cleanup function
@@ -178,20 +178,19 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
                     </Alert>
                 </div>
             )}
-           {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/80">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          )}
-          {heatmapUrl && (
-            <Image
-              src={heatmapUrl}
-              alt="Crowd density heatmap"
-              fill
-              className="object-cover opacity-50 pointer-events-none"
-              data-ai-hint="heatmap overlay"
-            />
-          )}
+            {heatmapUrl && (
+              <Image
+                src={heatmapUrl}
+                alt="Heatmap overlay"
+                fill
+                className="pointer-events-none object-contain opacity-70"
+              />
+            )}
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80">
+                <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            )}
         </div>
       </CardContent>
     </Card>
