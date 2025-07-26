@@ -98,7 +98,7 @@ export function VideoFeed() {
   };
 
   return (
-    <Card>
+    <Card className="border-2 border-[hsl(var(--chart-3))]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
