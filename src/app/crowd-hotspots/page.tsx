@@ -99,7 +99,7 @@ export default function CrowdHotspotsPage() {
                     <CardContent className="space-y-4">
                         <div className="relative aspect-video w-full overflow-hidden rounded-md border-2 border-dashed border-muted-foreground/50 bg-muted">
                         {selectedImage ? (
-                            <Image src={selectedImage} alt="Selected for analysis" layout="fill" objectFit="contain" />
+                            <Image src={selectedImage} alt="Selected for analysis" fill objectFit="contain" />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                                 <Upload className="h-12 w-12" />
@@ -113,7 +113,7 @@ export default function CrowdHotspotsPage() {
                             </div>
                         )}
                         {analysisResult && (
-                             <Image src={analysisResult} alt="Analysis result" layout="fill" objectFit="contain" className="opacity-60" />
+                             <Image src={analysisResult} alt="Analysis result" fill objectFit="contain" className="opacity-60" />
                         )}
                         </div>
 
@@ -148,7 +148,7 @@ export default function CrowdHotspotsPage() {
                     <CardContent>
                          {analysisResult ? (
                               <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                                  <Image src={analysisResult} alt="Crowd heatmap" layout="fill" objectFit="contain" />
+                                  <Image src={analysisResult} alt="Crowd heatmap" fill objectFit="contain" />
                               </div>
                           ) : (
                               <div className="flex items-center justify-center h-48 rounded-md bg-muted text-muted-foreground">

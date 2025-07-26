@@ -80,8 +80,8 @@ export function VideoFeed() {
           <Image
             src="https://placehold.co/1280x720"
             alt="Live video feed of a public space"
-            layout="fill"
-            objectFit="cover"
+            fill
+            className="object-cover"
             data-ai-hint="crowd event"
           />
           {isLoading && (
@@ -93,9 +93,8 @@ export function VideoFeed() {
             <Image
               src={heatmapUrl}
               alt="Crowd density heatmap"
-              layout="fill"
-              objectFit="cover"
-              className="opacity-50"
+              fill
+              className="object-cover opacity-50"
               data-ai-hint="heatmap overlay"
             />
           )}

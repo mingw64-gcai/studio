@@ -124,7 +124,7 @@ export default function MapAnalysisPage() {
                                 </GoogleMap>
                             </APIProvider>
                             {analysisResult && (
-                                <Image src={analysisResult} alt="Analysis result" layout="fill" objectFit="contain" className="opacity-60 pointer-events-none" />
+                                <Image src={analysisResult} alt="Analysis result" fill objectFit="contain" className="opacity-60 pointer-events-none" />
                             )}
                              {isLoading && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-background/80">
@@ -149,4 +149,3 @@ export default function MapAnalysisPage() {
     </div>
   );
 }
-
