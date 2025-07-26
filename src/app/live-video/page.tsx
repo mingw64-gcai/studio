@@ -12,7 +12,6 @@ import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import ReactPlayer from 'react-player/lazy';
 
 type JobStatus = 'idle' | 'processing' | 'success' | 'error';
 
@@ -25,12 +24,7 @@ export default function LiveVideoPage() {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [processedVideoUrl, setProcessedVideoUrl] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const resetState = () => {
     setSelectedFile(null);
@@ -233,15 +227,15 @@ export default function LiveVideoPage() {
                     </CardHeader>
                     <CardContent>
                        <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                        {status === 'success' && processedVideoUrl && isClient ? (
-                            <ReactPlayer
-                                url={processedVideoUrl}
-                                playing
+                        {status === 'success' && processedVideoUrl ? (
+                            <video
+                                key={processedVideoUrl}
+                                src={processedVideoUrl}
                                 controls
+                                autoPlay
                                 muted
-                                width="100%"
-                                height="100%"
-                                className="absolute top-0 left-0"
+                                playsInline
+                                className="w-full h-full rounded-md"
                             />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
