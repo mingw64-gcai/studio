@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,7 +81,7 @@ export default function PathPredictionPage() {
 
     const checkVideoStatus = () => {
       const processed = localStorage.getItem('isVideoProcessed') === 'true';
-      if (processed && !isVideoProcessed) {
+       if (processed && !isVideoProcessed) {
         setIsVideoProcessed(true);
         toast({
           title: 'Analysis Starting',
@@ -89,26 +89,32 @@ export default function PathPredictionPage() {
         });
         const timer = setTimeout(() => {
           handleAnalyze();
-        }, 5000); 
+        }, 5000);
         return () => clearTimeout(timer);
       } else if (!processed && isVideoProcessed) {
         resetState();
       }
     };
 
+    // Initial check
     checkVideoStatus();
 
+    // Listen for changes
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'isVideoProcessed') {
-        checkVideoStatus();
-      }
+        // When the key is isVideoProcessed and it's cleared from another page
+        if (event.key === 'isVideoProcessed') {
+            if (event.newValue === null) {
+                resetState();
+            } else {
+                checkVideoStatus();
+            }
+        }
     };
 
     window.addEventListener('storage', handleStorageChange);
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-
   }, [isClient, isVideoProcessed, handleAnalyze, resetState, toast]);
 
   return (
