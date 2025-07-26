@@ -6,11 +6,12 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Sparkles, PanelLeft, ImageIcon } from 'lucide-react';
+import { Loader2, Sparkles, PanelLeft, ImageIcon, FileVideo2 } from 'lucide-react';
 import { analyzeCrowdImage, AnalyzeCrowdImageOutput } from '@/ai/flows/analyze-crowd-image';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 
 export default function CrowdHotspotsPage() {
   const { toast } = useToast();
@@ -88,7 +89,7 @@ export default function CrowdHotspotsPage() {
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-1">
+            <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>
                         <CardTitle>Chart Analysis</CardTitle>
@@ -121,18 +122,30 @@ export default function CrowdHotspotsPage() {
                         </Button>
                     </CardContent>
                 </Card>
-            </div>
-            {analysisResult && (
-                 <Card className="mt-4">
+                
+                <Card>
                     <CardHeader>
                         <CardTitle>AI Analysis</CardTitle>
                         <CardDescription>A summary of the crowd situation from Gemini.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-foreground">{analysisResult}</p>
+                    <CardContent className="flex items-center justify-center min-h-[300px]">
+                        {isLoading ? (
+                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+                                <Loader2 className="h-12 w-12 mb-4 animate-spin" />
+                                <p className="font-semibold">Analyzing...</p>
+                            </div>
+                        ) : analysisResult ? (
+                           <p className="text-sm text-foreground">{analysisResult}</p>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+                                <FileVideo2 className="h-12 w-12 mb-4" />
+                                <p className="font-semibold">No data to display.</p>
+                                <p className="text-sm">Output will be generated after an image is analyzed.</p>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
-            )}
+            </div>
         </main>
         </div>
     </div>
