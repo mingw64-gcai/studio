@@ -87,7 +87,7 @@ export function CrowdProblemSolver() {
               </div>
             )}
             {result && (
-              <div className="space-y-4 prose prose-sm dark:prose-invert max-w-none">
+              <div className="space-y-4 prose dark:prose-invert max-w-none">
                 <div>
                     <h3 className="font-semibold text-foreground">Problem Analysis</h3>
                     <ReactMarkdown>{result.analysis}</ReactMarkdown>
