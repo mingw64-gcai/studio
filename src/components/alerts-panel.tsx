@@ -40,7 +40,7 @@ const alerts = [
 
 export function AlertsPanel() {
   return (
-    <Card className="border-t-4 border-t-destructive">
+    <Card className="border-t-8 border-t-destructive">
       <CardHeader>
         <CardTitle>Recent Alerts</CardTitle>
         <CardDescription>Automated notifications from the system.</CardDescription>
