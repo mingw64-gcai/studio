@@ -87,7 +87,7 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
 
     // Start analysis loop when component mounts and permission is granted
     if (hasCameraPermission) {
-        analysisIntervalRef.current = setInterval(analyzeFrame, 60000); // Analyze every 60 seconds
+        analysisIntervalRef.current = setInterval(analyzeFrame, 5000); // Analyze every 5 seconds
     }
     
     // Cleanup function
