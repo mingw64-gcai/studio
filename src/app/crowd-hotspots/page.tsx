@@ -86,11 +86,11 @@ export default function CrowdHotspotsPage() {
         setIsVideoProcessed(true);
         toast({
           title: 'Analysis Starting',
-          description: 'Generating crowd chart analysis. This will take about 20 seconds.',
+          description: 'Generating crowd chart analysis. This will take about 5 seconds.',
         });
         const timer = setTimeout(() => {
           handleAnalyze();
-        }, 20000); 
+        }, 5000); 
         return () => clearTimeout(timer);
       } else if (!processed && isVideoProcessed) {
         resetState();
