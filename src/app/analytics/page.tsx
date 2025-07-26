@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
           <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <Card>
+            <Card className="border-t-8 border-t-[hsl(var(--chart-3))]">
                 <CardHeader>
                     <CardTitle>High-Density Alerts</CardTitle>
                     <CardDescription>Alerts triggered per month (February - July 2025)</CardDescription>
