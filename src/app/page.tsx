@@ -67,7 +67,7 @@ export default function Dashboard() {
                 <Sidebar isSheet={true} />
             </SheetContent>
           </Sheet>
-          <div className="relative ml-auto flex-1 md:grow-0">
+          <div className="flex-1">
             <h1 className="text-3xl font-bold">Dashboard</h1>
           </div>
           <UserNav />
