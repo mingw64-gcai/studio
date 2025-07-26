@@ -33,8 +33,8 @@ export function UserNav() {
       <SettingsDialog open={showSettings} onOpenChange={setShowSettings} />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-            <Avatar className="h-8 w-8">
+          <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+            <Avatar className="h-10 w-10">
               <AvatarFallback
                 style={{ backgroundColor: "#34A853", color: "white" }}
               >
