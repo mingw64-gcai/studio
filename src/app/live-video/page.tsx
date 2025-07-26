@@ -260,7 +260,7 @@ export default function LiveVideoPage() {
                         {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                     </CardContent>
                 </Card>
-                 <Card>
+                 <Card className="border-t-[20px] border-t-[#34A853] border-b-0 border-l-0 border-r-0">
                     <CardHeader>
                         <CardTitle>Processed Video</CardTitle>
                         <CardDescription>
