@@ -10,7 +10,7 @@ import { Users, ShieldAlert, BellRing, Server } from "lucide-react";
 export function MetricsCards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-      <Card>
+      <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>Current Density</CardDescription>
           <CardTitle className="text-4xl text-[hsl(var(--chart-3))]">75%</CardTitle>
@@ -21,7 +21,7 @@ export function MetricsCards() {
           </div>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>Threat Level</CardDescription>
           <CardTitle className="text-4xl text-destructive">High</CardTitle>
@@ -32,7 +32,7 @@ export function MetricsCards() {
           </div>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>Active Alerts</CardDescription>
           <CardTitle className="text-4xl text-[hsl(var(--chart-3))]">3</CardTitle>
@@ -43,7 +43,7 @@ export function MetricsCards() {
           </div>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>System Status</CardDescription>
           <CardTitle className="text-4xl text-green-600">Online</CardTitle>
