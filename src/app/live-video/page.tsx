@@ -131,28 +131,57 @@ export default function LiveVideoPage() {
     }
   };
 
-  const renderResults = () => {
-      if(!resultVideoUrl) return null;
-      
-      return (
-          <Card>
-              <CardHeader>
-                  <CardTitle>Analysis Result</CardTitle>
-                  <CardDescription>The processed video is available below.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <h3 className="font-semibold">Processed Video</h3>
-                    <video 
-                        src={resultVideoUrl} 
-                        controls 
-                        className="w-full rounded-md" 
-                    />
-                  </div>
-              </CardContent>
-          </Card>
-      )
-  }
+  const renderVideoContent = () => {
+    if (resultVideoUrl) {
+        return (
+            <div className='aspect-video w-full'>
+                <video 
+                    src={resultVideoUrl} 
+                    controls 
+                    autoPlay
+                    className="w-full h-full rounded-md" 
+                />
+            </div>
+        );
+    }
+
+    if (selectedFile) {
+         return (
+            <div className='aspect-video w-full'>
+                <video 
+                    src={URL.createObjectURL(selectedFile)} 
+                    controls 
+                    className="w-full h-full rounded-md" 
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div 
+            className={cn(
+                "relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-md border-muted-foreground/50 bg-muted cursor-pointer transition-colors aspect-video",
+                {"bg-primary/10 border-primary": isDragging},
+                {"cursor-not-allowed opacity-50": isLoading}
+            )}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={isLoading ? undefined : handleUploadClick}
+        >
+            <FileVideo className="w-16 h-16 text-muted-foreground" />
+            <p className="mt-2 text-center">Drag & drop or click to upload</p>
+             <Input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileInputChange}
+                className="hidden"
+                accept="video/mp4,video/avi,video/mov,video/mkv"
+                disabled={isLoading}
+            />
+        </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -179,37 +208,18 @@ export default function LiveVideoPage() {
             <div className="grid gap-4 md:grid-cols-1">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Video Upload</CardTitle>
-                        <CardDescription>Upload a video to analyze for crowd behavior.</CardDescription>
+                        <CardTitle>{resultVideoUrl ? 'Analysis Result' : 'Video Upload'}</CardTitle>
+                        <CardDescription>
+                            {resultVideoUrl 
+                                ? 'The processed video is available below.' 
+                                : 'Upload a video to analyze for crowd behavior.'}
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div 
-                            className={cn(
-                                "relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-md border-muted-foreground/50 bg-muted cursor-pointer transition-colors",
-                                {"bg-primary/10 border-primary": isDragging},
-                                {"cursor-not-allowed opacity-50": isLoading}
-                            )}
-                            onDragOver={handleDragOver}
-                            onDragLeave={handleDragLeave}
-                            onDrop={handleDrop}
-                            onClick={isLoading ? undefined : handleUploadClick}
-                        >
-                            <FileVideo className="w-16 h-16 text-muted-foreground" />
-                            {selectedFile ? (
-                                <p className="mt-2 text-center">{selectedFile.name}</p>
-                            ) : (
-                                <p className="mt-2 text-center">Drag & drop or click to upload</p>
-                            )}
-                             <Input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleFileInputChange}
-                                className="hidden"
-                                accept="video/mp4,video/avi,video/mov,video/mkv"
-                                disabled={isLoading}
-                            />
-                            {isLoading && (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80">
+                        <div className="relative">
+                           {renderVideoContent()}
+                           {isLoading && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 rounded-md">
                                     <Loader2 className="h-10 w-10 animate-spin text-primary" />
                                     <p className="mt-4 text-lg font-semibold">Analyzing Video...</p>
                                     <p className="text-sm text-muted-foreground">This may take a few moments.</p>
@@ -218,11 +228,11 @@ export default function LiveVideoPage() {
                         </div>
 
                         <div className="flex gap-2">
-                             <Button onClick={handleUploadClick} variant="outline" disabled={isLoading}>
+                             <Button onClick={handleUploadClick} variant="outline" disabled={isLoading || !!resultVideoUrl}>
                                 <Upload className="mr-2 h-4 w-4" />
                                 {selectedFile ? "Change Video" : "Select Video"}
                             </Button>
-                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading}>
+                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading || !!resultVideoUrl}>
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -245,8 +255,6 @@ export default function LiveVideoPage() {
                         {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                     </CardContent>
                 </Card>
-
-                {renderResults()}
             </div>
         </main>
         </div>
