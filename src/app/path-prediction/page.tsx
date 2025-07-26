@@ -159,7 +159,7 @@ export default function PathPredictionPage() {
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="border-t-8 border-t-[hsl(var(--chart-4))]">
                     <CardHeader>
                         <CardTitle>AI Analysis</CardTitle>
                         <CardDescription>AI-generated summary of the predicted paths.</CardDescription>
