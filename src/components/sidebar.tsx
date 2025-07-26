@@ -12,9 +12,9 @@ const navLinks = [
   { href: '/', label: 'Dashboard', icon: Home },
   { href: '/live-video', label: 'Live Video', icon: Video },
   { href: '/crowd-hotspots', label: 'Chart Analysis', icon: ImageIcon },
+  { href: '/path-prediction', label: 'Path Prediction', icon: Footprints },
   { href: '/analytics', label: 'Analytics', icon: LineChart },
   { href: '/map-analysis', label: 'Map Analysis', icon: Map },
-  { href: '/path-prediction', label: 'Path Prediction', icon: Footprints },
   { href: '/lost-and-found', label: 'Lost and Found', icon: UserSearch },
 ]
 
