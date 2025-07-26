@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,10 +12,11 @@ import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import ReactPlayer from 'react-player/lazy';
 
 type JobStatus = 'idle' | 'processing' | 'success' | 'error';
 
-const PROCESSED_VIDEO_URL = "https://res.cloudinary.com/dtwt3cwfo/video/upload/v1753530244/crowd_analysis/job_20250726_164055_e62f7ced/processed_video_dpkgbd.mp4";
+const PROCESSED_VIDEO_URL = "https://asset.cloudinary.com/dtwt3cwfo/896dde973ade2d409bbd5784d56f9b3c";
 
 export default function LiveVideoPage() {
   const { toast } = useToast();
@@ -24,8 +25,13 @@ export default function LiveVideoPage() {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [processedVideoUrl, setProcessedVideoUrl] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const resetState = () => {
     setSelectedFile(null);
     setStatus('idle');
@@ -98,30 +104,13 @@ export default function LiveVideoPage() {
         description: 'Processing has started. This will take about 15 seconds.',
     });
 
-    setTimeout(async () => {
-        try {
-            const response = await fetch(PROCESSED_VIDEO_URL);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch video: ${response.statusText}`);
-            }
-            const videoBlob = await response.blob();
-            const blobUrl = URL.createObjectURL(videoBlob);
-            setProcessedVideoUrl(blobUrl);
-            setStatus('success');
-            toast({
-                title: 'Processing Complete',
-                description: 'The processed video is ready.',
-            });
-        } catch (e: any) {
-            console.error('Failed to load processed video:', e);
-            setError('Could not load the processed video from the server.');
-            setStatus('error');
-            toast({
-                variant: 'destructive',
-                title: 'Error',
-                description: 'Failed to retrieve the processed video.',
-            });
-        }
+    setTimeout(() => {
+        setProcessedVideoUrl(PROCESSED_VIDEO_URL);
+        setStatus('success');
+        toast({
+            title: 'Processing Complete',
+            description: 'The processed video is ready.',
+        });
     }, 15000);
 
   };
@@ -244,8 +233,16 @@ export default function LiveVideoPage() {
                     </CardHeader>
                     <CardContent>
                        <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                        {status === 'success' && processedVideoUrl ? (
-                            <video key={processedVideoUrl} src={processedVideoUrl} controls autoPlay muted playsInline className="w-full h-full rounded-md" />
+                        {status === 'success' && processedVideoUrl && isClient ? (
+                            <ReactPlayer
+                                url={processedVideoUrl}
+                                playing
+                                controls
+                                muted
+                                width="100%"
+                                height="100%"
+                                className="absolute top-0 left-0"
+                            />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                                 {isLoading ? (
