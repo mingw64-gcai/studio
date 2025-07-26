@@ -95,8 +95,8 @@ export default function PathPredictionPage() {
                             <video src={selectedVideo} controls className="w-full h-full object-contain" />
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                                <Upload className="h-12 w-12" />
-                                <p>Click to upload a video to begin</p>
+                                <Footprints className="h-12 w-12" />
+                                <p>Walk Path Prediction will be generated after a video is uploaded</p>
                             </div>
                         )}
                         {isLoading && (
