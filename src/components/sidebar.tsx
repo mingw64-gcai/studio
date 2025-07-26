@@ -71,9 +71,9 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
                 <Icons.logo className="h-20 w-20 transition-all group-hover:scale-110" />
             </Link>
             <div
-            className="group flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-lg font-semibold text-primary-foreground"
+            className="group flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-primary-foreground"
             >
-            <span className="font-semibold whitespace-nowrap">Drishti AI</span>
+            <span className="whitespace-nowrap text-xl font-bold">Drishti AI</span>
             </div>
             <span className="font-semibold whitespace-nowrap text-sm">Mingw64</span>
         </div>
