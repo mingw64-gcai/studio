@@ -98,13 +98,30 @@ export default function LiveVideoPage() {
         description: 'Processing has started. This will take about 15 seconds.',
     });
 
-    setTimeout(() => {
-        setProcessedVideoUrl(PROCESSED_VIDEO_URL);
-        setStatus('success');
-         toast({
-            title: 'Processing Complete',
-            description: 'The processed video is ready.',
-        });
+    setTimeout(async () => {
+        try {
+            const response = await fetch(PROCESSED_VIDEO_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch video: ${response.statusText}`);
+            }
+            const videoBlob = await response.blob();
+            const blobUrl = URL.createObjectURL(videoBlob);
+            setProcessedVideoUrl(blobUrl);
+            setStatus('success');
+            toast({
+                title: 'Processing Complete',
+                description: 'The processed video is ready.',
+            });
+        } catch (e: any) {
+            console.error('Failed to load processed video:', e);
+            setError('Could not load the processed video from the server.');
+            setStatus('error');
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to retrieve the processed video.',
+            });
+        }
     }, 15000);
 
   };
