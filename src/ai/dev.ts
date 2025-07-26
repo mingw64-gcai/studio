@@ -1,3 +1,4 @@
+
 import { config } from 'dotenv';
 config();
 
@@ -8,3 +9,4 @@ import '@/ai/flows/find-person-in-crowd.ts';
 import '@/ai/flows/solve-crowd-problem.ts';
 import '@/ai/flows/analyze-crowd-image.ts';
 import '@/ai/flows/analyze-walk-path-image.ts';
+import '@/ai/flows/count-faces-in-image.ts';

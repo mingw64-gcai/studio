@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import {
   Card,
@@ -15,15 +15,52 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { generateHeatmapOverlay } from '@/ai/flows/generate-heatmap-overlay';
+import { countFacesInImage } from '@/ai/flows/count-faces-in-image';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import type { ThreatLevel } from '@/app/page';
 
-export function VideoFeed() {
+interface VideoFeedProps {
+  setThreatLevel: (level: ThreatLevel) => void;
+}
+
+export function VideoFeed({ setThreatLevel }: VideoFeedProps) {
   const { toast } = useToast();
   const [showHeatmap, setShowHeatmap] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [heatmapUrl, setHeatmapUrl] = useState<string | null>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const analysisIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const analyzeFrame = useCallback(async () => {
+    if (!videoRef.current || videoRef.current.paused || videoRef.current.ended) {
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    const frameDataUri = canvas.toDataURL('image/jpeg');
+
+    try {
+      const { faceCount } = await countFacesInImage({ imageDataUri: frameDataUri });
+
+      if (faceCount >= 3) {
+        setThreatLevel('High');
+      } else if (faceCount === 2) {
+        setThreatLevel('Moderate');
+      } else {
+        setThreatLevel('Low');
+      }
+    } catch (error) {
+      console.error('Face count analysis failed', error);
+      // Don't show a toast here, as it would be annoying every 5 seconds.
+    }
+  }, [setThreatLevel]);
 
   useEffect(() => {
     const getCameraPermission = async () => {
@@ -46,15 +83,24 @@ export function VideoFeed() {
     };
 
     getCameraPermission();
+
+    // Start analysis loop when component mounts and permission is granted
+    if (hasCameraPermission) {
+        analysisIntervalRef.current = setInterval(analyzeFrame, 5000); // Analyze every 5 seconds
+    }
     
-    // Cleanup function to stop the video stream when the component unmounts
+    // Cleanup function
     return () => {
         if (videoRef.current && videoRef.current.srcObject) {
             const stream = videoRef.current.srcObject as MediaStream;
             stream.getTracks().forEach(track => track.stop());
         }
+        if (analysisIntervalRef.current) {
+            clearInterval(analysisIntervalRef.current);
+        }
     }
-  }, [toast]);
+  }, [toast, hasCameraPermission, analyzeFrame]);
+
 
   const handleHeatmapToggle = async (checked: boolean) => {
     setShowHeatmap(checked);

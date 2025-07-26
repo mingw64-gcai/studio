@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -6,8 +7,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Users, ShieldAlert, BellRing, Server } from "lucide-react";
+import { ThreatLevel } from "@/app/page";
+import { cn } from "@/lib/utils";
 
-export function MetricsCards() {
+interface MetricsCardsProps {
+  threatLevel: ThreatLevel;
+}
+
+export function MetricsCards({ threatLevel }: MetricsCardsProps) {
+
+  const threatLevelConfig = {
+    'Low': {
+      text: 'Low',
+      color: 'text-green-600',
+      description: 'No immediate threats detected'
+    },
+    'Moderate': {
+      text: 'Moderate',
+      color: 'text-[hsl(var(--chart-3))]',
+      description: 'Minor anomalies detected'
+    },
+    'High': {
+      text: 'High',
+      color: 'text-destructive',
+      description: 'Anomalous patterns detected'
+    }
+  }
+  const currentThreat = threatLevelConfig[threatLevel];
+
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
       <Card className="border-t-4 border-t-primary">
@@ -24,11 +52,11 @@ export function MetricsCards() {
       <Card className="border-t-4 border-t-primary">
         <CardHeader className="pb-2">
           <CardDescription>Threat Level</CardDescription>
-          <CardTitle className="text-4xl text-destructive">High</CardTitle>
+          <CardTitle className={cn("text-4xl", currentThreat.color)}>{currentThreat.text}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xs text-muted-foreground">
-            Anomalous patterns detected
+            {currentThreat.description}
           </div>
         </CardContent>
       </Card>

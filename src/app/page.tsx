@@ -12,12 +12,14 @@ import { PanelLeft } from 'lucide-react'
 import { CrowdProblemSolver } from '@/components/crowd-problem-solver'
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+export type ThreatLevel = 'Low' | 'Moderate' | 'High';
 
 export default function Dashboard() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+  const [threatLevel, setThreatLevel] = useState<ThreatLevel>('Low');
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -51,10 +53,10 @@ export default function Dashboard() {
           <UserNav />
         </header>
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-           <MetricsCards />
+           <MetricsCards threatLevel={threatLevel} />
            <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <div className="grid auto-rows-max items-start gap-4 md:gap-8 xl:col-span-2">
-                 <VideoFeed />
+                 <VideoFeed setThreatLevel={setThreatLevel} />
                  <CrowdProblemSolver />
               </div>
               <div className="grid auto-rows-max items-start gap-4 md:gap-8">
