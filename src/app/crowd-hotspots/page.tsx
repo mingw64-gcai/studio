@@ -128,7 +128,7 @@ export default function CrowdHotspotsPage() {
                 <Sidebar isSheet={true} />
               </SheetContent>
             </Sheet>
-            <div className="relative ml-auto flex-1 md:grow-0">
+            <div className="flex-1">
                 <h1 className="text-xl font-semibold">Chart Analysis</h1>
             </div>
             <UserNav />
