@@ -53,7 +53,7 @@ export function CrowdProblemSolver() {
   };
 
   return (
-    <Card>
+    <Card className="border-t-8 border-t-primary">
       <CardHeader>
         <CardTitle>Crowd Problem Solver</CardTitle>
         <CardDescription>
