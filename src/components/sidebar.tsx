@@ -57,7 +57,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
 
 
   const commonLinkClasses = "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
-  const activeLinkClasses = "bg-primary text-primary-foreground hover:text-primary-foreground/90";
+  const activeLinkClasses = "bg-[hsl(var(--chart-4))] text-primary-foreground hover:text-primary-foreground/90";
   const sheetLinkClasses = "gap-4 px-2.5";
   const sheetActiveLinkClasses = "text-foreground";
 
