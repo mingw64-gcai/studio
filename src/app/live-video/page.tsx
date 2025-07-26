@@ -63,8 +63,6 @@ export default function LiveVideoPage() {
   const handleFileChange = (file: File | null) => {
     if (file) {
         if (file.type.startsWith('video/')) {
-            // We don't call resetState here anymore to keep the processed video visible
-            // until a new analysis is started.
             setSelectedFile(file);
         } else {
             toast({
@@ -114,7 +112,6 @@ export default function LiveVideoPage() {
       return;
     }
     
-    // Clear previous results before starting a new analysis
     setProcessedVideoUrl(null);
     localStorage.removeItem('processedVideoUrl');
     localStorage.removeItem('isVideoProcessed');
@@ -219,7 +216,7 @@ export default function LiveVideoPage() {
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
             <div className="grid gap-4 md:grid-cols-1">
-                <Card>
+                <Card style={{ borderColor: '#EA4335' }}>
                     <CardHeader>
                         <CardTitle>Input Video</CardTitle>
                         <CardDescription>
@@ -307,5 +304,3 @@ export default function LiveVideoPage() {
     </div>
   );
 }
-
-    
