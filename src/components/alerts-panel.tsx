@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { AlertTriangle, Info, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 const alerts = [
   {
@@ -25,7 +26,8 @@ const alerts = [
     description: "Anomalous flow pattern detected near main stage.",
     time: "5m ago",
     priority: "Medium",
-    variant: "default",
+    variant: "outline",
+    className: "bg-yellow-400/20 text-yellow-700 border-yellow-400/40"
   },
   {
     id: 3,
@@ -34,7 +36,7 @@ const alerts = [
     description: "AI model v1.2 has been successfully deployed.",
     time: "1h ago",
     priority: "Low",
-    variant: "secondary",
+    variant: "outline",
   },
 ];
 
@@ -54,7 +56,7 @@ export function AlertsPanel() {
             <div className="grid gap-1">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-medium">{alert.title}</p>
-                <Badge variant={alert.variant as any}>{alert.priority}</Badge>
+                <Badge variant={alert.variant as any} className={cn(alert.className)}>{alert.priority}</Badge>
               </div>
 
               <p className="text-sm text-muted-foreground">
