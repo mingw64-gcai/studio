@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, PanelLeft, FileVideo2, RefreshCw, CheckCircle } from 'lucide-react';
+import { Upload, Loader2, Sparkles, PanelLeft, FileVideo2, RefreshCw } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
