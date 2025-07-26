@@ -210,7 +210,7 @@ export default function LiveVideoPage() {
               </SheetContent>
             </Sheet>
             <div className="relative ml-auto flex-1 md:grow-0">
-                <h1 className="text-xl font-semibold whitespace-nowrap">Live Video Analysis</h1>
+                <h1 className="text-2xl font-bold">Live Video Analysis</h1>
             </div>
             <UserNav />
         </header>
