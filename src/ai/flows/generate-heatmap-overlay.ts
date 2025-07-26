@@ -15,7 +15,7 @@ const GenerateHeatmapOverlayInputSchema = z.object({
   videoDataUri: z
     .string()
     .describe(
-      "A video feed, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "A video frame image, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
   keywords: z.string().describe('Keywords to highlight high density areas in the crowd.'),
 });
@@ -27,7 +27,7 @@ const GenerateHeatmapOverlayOutputSchema = z.object({
   heatmapOverlayDataUri: z
     .string()
     .describe(
-      'A heatmap overlay image, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.' // Explicitly escape special characters
+      'A heatmap overlay image, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
     ),
 });
 export type GenerateHeatmapOverlayOutput = z.infer<
@@ -40,29 +40,30 @@ export async function generateHeatmapOverlay(
   return generateHeatmapOverlayFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateHeatmapOverlayPrompt',
-  input: {schema: GenerateHeatmapOverlayInputSchema},
-  output: {schema: GenerateHeatmapOverlayOutputSchema},
-  prompt: `You are an AI that generates heatmap overlays for video feeds to visualize crowd density.
-
-  Based on the video feed and the provided keywords, generate a heatmap overlay image that highlights areas of high crowd density related to the keywords.
-
-  Video Feed: {{media url=videoDataUri}}
-  Keywords: {{{keywords}}}
-
-  Return the heatmap overlay as a data URI.
-  `,
-});
-
 const generateHeatmapOverlayFlow = ai.defineFlow(
   {
     name: 'generateHeatmapOverlayFlow',
     inputSchema: GenerateHeatmapOverlayInputSchema,
     outputSchema: GenerateHeatmapOverlayOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    return output!;
+  async ({ videoDataUri, keywords }) => {
+     const {media} = await ai.generate({
+      model: 'googleai/gemini-2.0-flash-preview-image-generation',
+      prompt: [
+        {media: {url: videoDataUri}},
+        {text: `Analyze the provided image of a crowd. Generate a heatmap overlay identifying areas of high crowd density based on these keywords: "${keywords}". The heatmap should use red for the most dense areas, fading to yellow, then green, and finally becoming transparent in sparse areas. The overlay should only contain the heatmap colors and be otherwise transparent.`},
+      ],
+      config: {
+        responseModalities: ['TEXT', 'IMAGE'],
+      },
+    });
+
+    if (!media?.url) {
+        throw new Error('The AI model did not return an image.');
+    }
+
+    return {
+      heatmapOverlayDataUri: media.url,
+    };
   }
 );
