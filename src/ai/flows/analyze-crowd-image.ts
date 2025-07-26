@@ -60,7 +60,7 @@ const analyzeCrowdImageFlow = ai.defineFlow(
         }),
         // Generate text analysis
         ai.generate({
-            model: 'googleai/gemini-pro-vision',
+            model: 'googleai/gemini-1.5-flash-latest',
             prompt: [
                 {media: {url: imageDataUri}},
                 {text: 'You are an expert in crowd analysis. Describe the scene in the image, focusing on crowd density, potential risks, and overall atmosphere. Provide a concise summary.'},
