@@ -116,7 +116,7 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
       <CardContent>
         <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
           {hasCameraPermission && (
-            <Badge variant="destructive" className="absolute top-2 left-2 z-10 animate-pulse">
+            <Badge variant="destructive" className="absolute top-2 left-2 z-10 animate-pulse text-base px-4 py-1">
               LIVE
             </Badge>
           )}
@@ -128,7 +128,7 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
                       <AlertDescription>
                         Please allow camera access in your browser settings to see the live feed.
                       </AlertDescription>
-                    </Alert>
+                     </Alert>
                 </div>
             )}
         </div>
