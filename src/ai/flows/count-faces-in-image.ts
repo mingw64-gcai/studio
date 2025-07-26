@@ -35,6 +35,7 @@ export async function countFacesInImage(
 
 const countFacesPrompt = ai.definePrompt({
     name: 'countFacesPrompt',
+    model: 'googleai/gemini-1.5-flash-latest',
     input: { schema: CountFacesInImageInputSchema },
     output: { schema: CountFacesInImageOutputSchema },
     prompt: `Analyze the provided image and count the number of human faces visible. Provide only the total count.
