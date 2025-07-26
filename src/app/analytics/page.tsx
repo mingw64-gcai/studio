@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -11,7 +12,7 @@ import {
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { PanelLeft } from 'lucide-react';
+import { PanelLeft, BarChart2 } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 
 const chartData = [
@@ -31,6 +32,16 @@ const chartConfig = {
 };
 
 export default function AnalyticsPage() {
+  const [isVideoProcessed, setIsVideoProcessed] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // localStorage is only available in the browser
+    const processed = localStorage.getItem('isVideoProcessed') === 'true';
+    setIsVideoProcessed(processed);
+    setIsLoading(false);
+  }, []);
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Sidebar />
@@ -59,23 +70,33 @@ export default function AnalyticsPage() {
                     <CardDescription>January - June 2024</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <ChartContainer config={chartConfig}>
-                    <BarChart accessibilityLayer data={chartData}>
-                        <CartesianGrid vertical={false} />
-                        <XAxis
-                        dataKey="month"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value) => value.slice(0, 3)}
-                        />
-                        <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent hideLabel />}
-                        />
-                        <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
-                    </BarChart>
-                    </ChartContainer>
+                    {isLoading ? (
+                        <p>Loading...</p>
+                    ) : isVideoProcessed ? (
+                        <ChartContainer config={chartConfig}>
+                            <BarChart accessibilityLayer data={chartData}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis
+                                dataKey="month"
+                                tickLine={false}
+                                tickMargin={10}
+                                axisLine={false}
+                                tickFormatter={(value) => value.slice(0, 3)}
+                                />
+                                <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                                />
+                                <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+                            </BarChart>
+                        </ChartContainer>
+                    ) : (
+                        <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+                            <BarChart2 className="h-12 w-12 mb-4" />
+                            <p className="font-semibold">No data to display.</p>
+                            <p className="text-sm">Please upload a video in the live video section to generate and analyse charts.</p>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </main>

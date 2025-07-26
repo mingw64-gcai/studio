@@ -42,6 +42,7 @@ export default function LiveVideoPage() {
     if(fileInputRef.current) {
         fileInputRef.current.value = "";
     }
+    localStorage.removeItem('isVideoProcessed');
   }
 
   const handleFileChange = (file: File | null) => {
@@ -110,6 +111,7 @@ export default function LiveVideoPage() {
         try {
             setProcessedVideoUrl(PROCESSED_VIDEO_URL);
             setStatus('success');
+            localStorage.setItem('isVideoProcessed', 'true');
             toast({
                 title: 'Processing Complete',
                 description: 'The processed video is ready.',
@@ -280,5 +282,3 @@ export default function LiveVideoPage() {
     </div>
   );
 }
-
-    
