@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Loader2, Wand } from 'lucide-react';
+import { Loader2, Wand, Trash2 } from 'lucide-react';
 import { solveCrowdProblem, SolveCrowdProblemOutput } from '@/ai/flows/solve-crowd-problem';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
@@ -52,6 +52,11 @@ export function CrowdProblemSolver() {
       setIsLoading(false);
     }
   };
+  
+  const handleClear = () => {
+    setProblem('');
+    setResult(null);
+  }
 
   return (
     <Card className="border-t-8 border-t-accent">
@@ -69,14 +74,20 @@ export function CrowdProblemSolver() {
           disabled={isLoading}
           rows={3}
         />
-        <Button onClick={handleSolve} disabled={isLoading} className="w-full">
-          {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Wand className="mr-2 h-4 w-4" />
-          )}
-          Find Solution
-        </Button>
+        <div className="flex gap-2">
+            <Button onClick={handleSolve} disabled={isLoading} className="w-full">
+            {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+                <Wand className="mr-2 h-4 w-4" />
+            )}
+            Find Solution
+            </Button>
+            <Button onClick={handleClear} variant="outline" disabled={isLoading}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                Clear
+            </Button>
+        </div>
 
         {(isLoading || result) && (
           <div className="mt-4 rounded-md border bg-muted/50 p-4 space-y-4">
@@ -87,7 +98,7 @@ export function CrowdProblemSolver() {
               </div>
             )}
             {result && (
-              <div className="space-y-4 text-sm max-w-none prose dark:prose-invert">
+              <div className="space-y-4 text-sm">
                 <div>
                     <h3 className="font-semibold text-foreground">Problem Analysis</h3>
                     <ReactMarkdown className="prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">{result.analysis}</ReactMarkdown>
