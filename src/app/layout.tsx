@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
@@ -27,12 +28,12 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
-              <div className="flex flex-col min-h-screen">
-                <main className="flex-grow flex flex-col">{children}</main>
-                <footer className="w-full py-4 text-center text-xs text-muted-foreground">
-                  Made with ❤️ by Team Mingw64
-                </footer>
-              </div>
+            <div className="flex flex-col min-h-screen">
+              <main className="flex-1 flex flex-col">{children}</main>
+              <footer className="w-full py-4 text-center text-xs text-muted-foreground">
+                Made with ❤️ by Team Mingw64
+              </footer>
+            </div>
           </AuthProvider>
           <Toaster />
         </ThemeProvider>
