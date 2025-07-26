@@ -27,7 +27,12 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
-              {children}
+              <div className="flex flex-col min-h-screen">
+                <main className="flex-grow">{children}</main>
+                <footer className="w-full py-4 text-center text-xs text-muted-foreground">
+                  Made with ❤️ by Team Mingw64
+                </footer>
+              </div>
           </AuthProvider>
           <Toaster />
         </ThemeProvider>
