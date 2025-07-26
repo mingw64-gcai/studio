@@ -37,6 +37,7 @@ const alerts = [
     time: "1h ago",
     priority: "Low",
     variant: "outline",
+    className: "bg-green-400/20 text-green-700 border-green-400/40"
   },
 ];
 
