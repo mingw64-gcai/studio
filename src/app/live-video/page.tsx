@@ -119,11 +119,12 @@ export default function LiveVideoPage() {
       });
     } catch (e: any) {
       console.error('Analysis failed:', e);
-      setError(e.message);
+      const errorMessage = e.message || 'Could not process the video. Check the browser console and ensure the backend server is running correctly.';
+      setError(errorMessage);
       toast({
         variant: 'destructive',
         title: 'Analysis Failed',
-        description: e.message || 'Could not process the video. Check the browser console and ensure the backend server is running correctly.',
+        description: errorMessage,
       });
     } finally {
         setIsLoading(false);
