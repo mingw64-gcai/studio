@@ -63,7 +63,7 @@ const analyzeCrowdImageFlow = ai.defineFlow(
             model: 'googleai/gemini-1.5-flash-latest',
             prompt: [
                 {media: {url: imageDataUri}},
-                {text: 'You are an expert in crowd analysis. Describe the scene in the image, focusing on crowd density, potential risks, and overall atmosphere. Provide a concise summary.'},
+                {text: 'You are an expert in crowd analysis. You will be shown an image with a generated visualization overlay. Explain what this visualization represents in the context of the original image. Describe what the colored areas signify about the crowd.'},
             ]
         })
     ]);
