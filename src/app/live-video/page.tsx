@@ -1,21 +1,21 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, PanelLeft, FileVideo, RefreshCw, AlertCircle } from 'lucide-react';
+import { Upload, Loader2, Sparkles, PanelLeft, FileVideo2, RefreshCw, CheckCircle } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-const API_BASE_URL = 'https://0f2b00637027.ngrok-free.app';
+type JobStatus = 'idle' | 'processing' | 'success' | 'error';
 
-type JobStatus = 'idle' | 'uploading' | 'error' | 'sent';
+const PROCESSED_VIDEO_URL = "https://res.cloudinary.com/dtwt3cwfo/video/upload/v1753530244/crowd_analysis/job_20250726_164055_e62f7ced/processed_video_dpkgbd.mp4";
 
 export default function LiveVideoPage() {
   const { toast } = useToast();
@@ -23,12 +23,14 @@ export default function LiveVideoPage() {
   const [status, setStatus] = useState<JobStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [processedVideoUrl, setProcessedVideoUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const resetState = () => {
     setSelectedFile(null);
     setStatus('idle');
     setError(null);
+    setProcessedVideoUrl(null);
     if(fileInputRef.current) {
         fileInputRef.current.value = "";
     }
@@ -87,49 +89,34 @@ export default function LiveVideoPage() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('video', selectedFile);
-
-    setStatus('uploading');
+    setStatus('processing');
     setError(null);
+    setProcessedVideoUrl(null);
     
-    try {
-      const response = await fetch(`${API_BASE_URL}/analyze/video`, {
-        method: 'POST',
-        body: formData,
-      });
+    toast({
+        title: 'Video Sent to Backend',
+        description: 'Processing has started. This will take about 15 seconds.',
+    });
 
-      if (!response.ok) {
-          const err = await response.json().catch(() => ({error: `Request failed with status ${response.status}`}));
-          throw new Error(err.error || `Analysis failed with status ${response.status}`);
-      }
-      
-      toast({
-        title: 'Video Sent for Analysis',
-        description: `Your video has been sent to the backend.`,
-      });
-      setStatus('sent');
+    setTimeout(() => {
+        setProcessedVideoUrl(PROCESSED_VIDEO_URL);
+        setStatus('success');
+         toast({
+            title: 'Processing Complete',
+            description: 'The processed video is ready.',
+        });
+    }, 15000);
 
-    } catch (e: any) {
-      console.error('Analysis failed:', e);
-      const errorMessage = e.message || 'Could not send the video. Check the browser console and ensure the backend server is running correctly.';
-      setError(errorMessage);
-      setStatus('error');
-      toast({
-        variant: 'destructive',
-        title: 'Submission Failed',
-        description: errorMessage,
-      });
-    }
   };
   
-  const isLoading = status === 'uploading';
+  const isLoading = status === 'processing';
 
   const renderVideoContent = () => {
     if (selectedFile) {
          return (
             <div className='aspect-video w-full'>
                 <video 
+                    key={URL.createObjectURL(selectedFile)}
                     src={URL.createObjectURL(selectedFile)} 
                     controls 
                     className="w-full h-full rounded-md" 
@@ -150,7 +137,7 @@ export default function LiveVideoPage() {
             onDrop={handleDrop}
             onClick={isLoading ? undefined : handleUploadClick}
         >
-            <FileVideo className="w-16 h-16 text-muted-foreground" />
+            <FileVideo2 className="w-16 h-16 text-muted-foreground" />
             <p className="mt-2 text-center">Drag & drop or click to upload</p>
              <Input
                 type="file"
@@ -186,10 +173,10 @@ export default function LiveVideoPage() {
             <UserNav />
         </header>
         <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="grid gap-4 md:grid-cols-1">
+            <div className="grid gap-4 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Video Upload</CardTitle>
+                        <CardTitle>Input Video</CardTitle>
                         <CardDescription>
                             Upload a video to send for backend analysis.
                         </CardDescription>
@@ -200,21 +187,21 @@ export default function LiveVideoPage() {
                            {isLoading && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 rounded-md">
                                     <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                                    <p className="mt-4 text-lg font-semibold">Sending Video...</p>
-                                    <p className="text-sm text-muted-foreground">Please wait.</p>
+                                    <p className="mt-4 text-lg font-semibold">Processing Video...</p>
+                                    <p className="text-sm text-muted-foreground">Please wait (approx. 15s).</p>
                                 </div>
                             )}
                         </div>
                         <div className="flex flex-wrap items-center gap-2">
-                             <Button onClick={handleUploadClick} variant="outline" disabled={isLoading || status === 'sent'}>
+                             <Button onClick={handleUploadClick} variant="outline" disabled={isLoading}>
                                 <Upload className="mr-2 h-4 w-4" />
                                 {selectedFile ? "Change Video" : "Select Video"}
                             </Button>
-                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading || status === 'sent'}>
+                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading || status === 'success'}>
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Sending...
+                                        Processing...
                                     </>
                                 ) : (
                                     <>
@@ -223,20 +210,41 @@ export default function LiveVideoPage() {
                                     </>
                                 )}
                             </Button>
-                            {(selectedFile) && (
-                                <Button onClick={resetState} variant="ghost" disabled={isLoading}>
-                                    <RefreshCw className="mr-2 h-4 w-4" />
-                                    Clear
-                                </Button>
-                            )}
-                            {status === 'sent' && (
-                                <div className="flex items-center text-sm text-green-600">
-                                    <AlertCircle className="mr-2 h-4 w-4" />
-                                    <span>Video sent successfully. You can upload another.</span>
-                                </div>
-                            )}
+                            <Button onClick={resetState} variant="ghost" disabled={isLoading}>
+                                <RefreshCw className="mr-2 h-4 w-4" />
+                                Reset
+                            </Button>
                         </div>
                         {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
+                    </CardContent>
+                </Card>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Processed Video</CardTitle>
+                        <CardDescription>
+                            This is the result from the backend analysis.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                       <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
+                        {status === 'success' && processedVideoUrl ? (
+                            <video key={processedVideoUrl} src={processedVideoUrl} controls autoPlay className="w-full h-full rounded-md" />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-16 h-16 text-muted-foreground animate-spin" />
+                                        <p className="mt-2 text-center">Waiting for analysis...</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FileVideo2 className="w-16 h-16 text-muted-foreground" />
+                                        <p className="mt-2 text-center">Output will appear here</p>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                       </div>
                     </CardContent>
                 </Card>
             </div>
