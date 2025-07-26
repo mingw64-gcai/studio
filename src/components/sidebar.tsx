@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, LineChart, ImageIcon, Map } from 'lucide-react'
+import { Home, LineChart, ImageIcon, Map, Footprints } from 'lucide-react'
 
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
@@ -13,6 +13,7 @@ const navLinks = [
   { href: '/analytics', label: 'Analytics', icon: LineChart },
   { href: '/crowd-hotspots', label: 'Crowd Heatmap', icon: ImageIcon },
   { href: '/map-analysis', label: 'Map Analysis', icon: Map },
+  { href: '/path-prediction', label: 'Path Prediction', icon: Footprints },
 ]
 
 interface SidebarProps {
@@ -53,7 +54,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
           className="group flex h-12 w-12 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
         >
           <Icons.logo className="h-6 w-6 transition-all group-hover:scale-110" />
-          <span className="sr-only">Drishti AI</span>
+          <span className="sr-only">Drishti AI Mingw64</span>
         </Link>
         {navLinks.map(renderLink)}
       </nav>
@@ -68,7 +69,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
           className="group flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary px-4 text-xl font-semibold text-primary-foreground md:h-10 md:text-lg"
         >
           <Icons.logo className="h-6 w-6 transition-all group-hover:scale-110" />
-          <span className="font-semibold">Drishti AI</span>
+          <span className="font-semibold">Drishti AI Mingw64</span>
         </Link>
         <div className="flex flex-col gap-y-2">
             {navLinks.map(renderLink)}
