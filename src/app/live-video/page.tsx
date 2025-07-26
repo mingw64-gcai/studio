@@ -1,97 +1,39 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Video, CheckCircle, XCircle, FileVideo, PanelLeft, RefreshCw, Sparkles } from 'lucide-react';
+import { Upload, Loader2, Sparkles, PanelLeft, FileVideo, RefreshCw, Video } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-const API_BASE_URL = 'https://625a1df66bd0.ngrok-free.app'; // As per the documentation
-
-type JobStatus = 'queued' | 'processing' | 'completed' | 'failed' | null;
-type AvailableFile = {
-    available: boolean;
-    filename: string;
-    size_bytes: number;
-    size_mb: number;
-    download_url: string;
-};
+const API_BASE_URL = 'http://localhost:5001';
 
 export default function LiveVideoPage() {
   const { toast } = useToast();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [jobId, setJobId] = useState<string | null>(null);
-  const [status, setStatus] = useState<JobStatus>(null);
-  const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [resultFiles, setResultFiles] = useState<Record<string, AvailableFile> | null>(null);
+  const [resultVideoUrl, setResultVideoUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const resetState = () => {
     setSelectedFile(null);
-    setJobId(null);
-    setStatus(null);
-    setProgress(0);
+    setIsLoading(false);
     setError(null);
-    setResultFiles(null);
+    setResultVideoUrl(null);
     if(fileInputRef.current) {
         fileInputRef.current.value = "";
     }
   }
-
-
-  useEffect(() => {
-    if (!jobId || status === 'completed' || status === 'failed') {
-      return;
-    }
-
-    const interval = setInterval(async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/status/${jobId}`);
-        if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.error || 'Failed to get status');
-        }
-        const data = await response.json();
-        setStatus(data.status);
-        setProgress(data.progress);
-        setError(data.error || null);
-
-        if (data.status === 'completed') {
-            const filesResponse = await fetch(`${API_BASE_URL}/files/${jobId}`);
-            const filesData = await filesResponse.json();
-            setResultFiles(filesData.available_files);
-            toast({
-                title: 'Analysis Complete!',
-                description: 'The video has been processed successfully.',
-            });
-        } else if (data.status === 'failed') {
-             toast({
-                variant: 'destructive',
-                title: 'Analysis Failed',
-                description: data.error || 'An unknown error occurred during processing.',
-            });
-        }
-      } catch (e: any) {
-        setError(e.message);
-        setStatus('failed');
-        console.error('Status check failed:', e);
-      }
-    }, 2000); // Poll every 2 seconds as suggested
-
-    return () => clearInterval(interval);
-  }, [jobId, status, toast]);
 
   const handleFileChange = (file: File | null) => {
     if (file) {
@@ -148,137 +90,60 @@ export default function LiveVideoPage() {
 
     const formData = new FormData();
     formData.append('video', selectedFile);
-    formData.append('social_distance', 'true');
-    formData.append('abnormal_detection', 'true');
 
-    setProgress(0);
-    setStatus('queued');
+    setIsLoading(true);
     setError(null);
+    setResultVideoUrl(null);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/analyze`, {
+      const response = await fetch(`${API_BASE_URL}/analyze/video`, {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-          const err = await response.json();
-          throw new Error(err.error || `Upload failed with status ${response.status}`);
+          const err = await response.json().catch(() => ({error: `Request failed with status ${response.status}`}));
+          throw new Error(err.error || `Analysis failed with status ${response.status}`);
       }
       
-      const result = await response.json();
-      setJobId(result.job_id);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setResultVideoUrl(url);
+
       toast({
-        title: 'Upload Successful',
-        description: `Analysis started with Job ID: ${result.job_id}`,
+        title: 'Analysis Complete',
+        description: `Your video has been processed successfully.`,
       });
     } catch (e: any) {
-      console.error('Upload failed:', e);
+      console.error('Analysis failed:', e);
       setError(e.message);
-      setStatus('failed');
       toast({
         variant: 'destructive',
-        title: 'Upload Failed',
-        description: e.message || 'Could not start the analysis.',
+        title: 'Analysis Failed',
+        description: e.message || 'Could not process the video.',
       });
+    } finally {
+        setIsLoading(false);
     }
   };
 
-  const renderStatus = () => {
-    if (!jobId) return null;
-
-    let statusContent = null;
-
-    if (status === 'queued' || status === 'processing') {
-      statusContent = (
-        <div className="space-y-4 text-center">
-            <div className="flex justify-center items-center">
-                <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            </div>
-            <p className="text-lg font-semibold capitalize">{status}...</p>
-            <Progress value={progress} className="w-full" />
-            <p className="text-sm text-muted-foreground">{progress}% complete</p>
-        </div>
-      );
-    } else if (status === 'completed') {
-       statusContent = (
-            <div className="space-y-4 text-center">
-                <div className="flex justify-center items-center">
-                   <CheckCircle className="h-10 w-10 text-green-500" />
-                </div>
-                <p className="text-lg font-semibold">Analysis Complete</p>
-                <Progress value={100} className="w-full" />
-            </div>
-       )
-    } else if (status === 'failed') {
-         statusContent = (
-            <div className="space-y-4 text-center">
-                <div className="flex justify-center items-center">
-                    <XCircle className="h-10 w-10 text-destructive" />
-                </div>
-                 <p className="text-lg font-semibold">Analysis Failed</p>
-                {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
-            </div>
-         )
-    }
-
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Analysis Status</CardTitle>
-                <CardDescription>Job ID: {jobId}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                {statusContent}
-            </CardContent>
-        </Card>
-    )
-
-  }
-
   const renderResults = () => {
-      if(status !== 'completed' || !resultFiles) return null;
+      if(!resultVideoUrl) return null;
       
-      const processedVideo = resultFiles.processed_video;
-
       return (
           <Card>
               <CardHeader>
-                  <CardTitle>Results</CardTitle>
-                  <CardDescription>The analysis is complete. View or download the results below.</CardDescription>
+                  <CardTitle>Analysis Result</CardTitle>
+                  <CardDescription>The processed video is available below.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                  {processedVideo?.available && (
-                      <div className="space-y-2">
-                        <h3 className="font-semibold">Processed Video</h3>
-                        <video 
-                            src={`${API_BASE_URL}${processedVideo.download_url}`} 
-                            controls 
-                            className="w-full rounded-md" 
-                        />
-                      </div>
-                  )}
-
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {Object.entries(resultFiles).map(([key, file]) => {
-                          if(!file.available || key === 'processed_video') return null;
-
-                          return (
-                              <Card key={key}>
-                                  <CardHeader className="pb-2">
-                                    <CardTitle className="text-base">{file.filename}</CardTitle>
-                                    <CardDescription>{(file.size_mb).toFixed(2)} MB</CardDescription>
-                                  </CardHeader>
-                                  <CardContent>
-                                    <a href={`${API_BASE_URL}${file.download_url}`} download={file.filename} target="_blank" rel="noopener noreferrer">
-                                        <Button variant="outline" className="w-full">
-                                            Download
-                                        </Button>
-                                    </a>
-                                  </CardContent>
-                              </Card>
-                          )
-                      })}
+                  <div className="space-y-2">
+                    <h3 className="font-semibold">Processed Video</h3>
+                    <video 
+                        src={resultVideoUrl} 
+                        controls 
+                        className="w-full rounded-md" 
+                    />
                   </div>
               </CardContent>
           </Card>
@@ -317,12 +182,13 @@ export default function LiveVideoPage() {
                         <div 
                             className={cn(
                                 "relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-md border-muted-foreground/50 bg-muted cursor-pointer transition-colors",
-                                {"bg-primary/10 border-primary": isDragging}
+                                {"bg-primary/10 border-primary": isDragging},
+                                {"cursor-not-allowed opacity-50": isLoading}
                             )}
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
-                            onClick={handleUploadClick}
+                            onClick={isLoading ? undefined : handleUploadClick}
                         >
                             <FileVideo className="w-16 h-16 text-muted-foreground" />
                             {selectedFile ? (
@@ -336,30 +202,46 @@ export default function LiveVideoPage() {
                                 onChange={handleFileInputChange}
                                 className="hidden"
                                 accept="video/mp4,video/avi,video/mov,video/mkv"
-                                disabled={!!jobId && status !== 'completed' && status !== 'failed'}
+                                disabled={isLoading}
                             />
+                            {isLoading && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80">
+                                    <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                                    <p className="mt-4 text-lg font-semibold">Analyzing Video...</p>
+                                    <p className="text-sm text-muted-foreground">This may take a few moments.</p>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex gap-2">
-                             <Button onClick={handleUploadClick} variant="outline" disabled={!!jobId && status !== 'completed' && status !== 'failed'}>
+                             <Button onClick={handleUploadClick} variant="outline" disabled={isLoading}>
                                 <Upload className="mr-2 h-4 w-4" />
                                 {selectedFile ? "Change Video" : "Select Video"}
                             </Button>
-                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || (!!jobId && status !== 'completed' && status !== 'failed')}>
-                                <Sparkles className="mr-2 h-4 w-4" />
-                                Analyze
+                            <Button onClick={handleAnalyzeClick} disabled={!selectedFile || isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Sparkles className="mr-2 h-4 w-4" />
+                                        Analyze
+                                    </>
+                                )}
                             </Button>
-                            {jobId && (
-                                <Button onClick={resetState} variant="ghost">
+                            {(selectedFile || resultVideoUrl) && (
+                                <Button onClick={resetState} variant="ghost" disabled={isLoading}>
                                     <RefreshCw className="mr-2 h-4 w-4" />
                                     Start New Analysis
                                 </Button>
                             )}
                         </div>
+                        {error && <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>{error}</AlertDescription></Alert>}
                     </CardContent>
                 </Card>
 
-                {renderStatus()}
                 {renderResults()}
             </div>
         </main>
@@ -367,3 +249,5 @@ export default function LiveVideoPage() {
     </div>
   );
 }
+
+    
