@@ -3,7 +3,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, LineChart, ImageIcon, Map, Footprints, UserSearch, Video, AlertTriangle } from 'lucide-react'
+import { Home, LineChart, ImageIcon, Footprints, UserSearch, Video, AlertTriangle } from 'lucide-react'
 
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
@@ -16,7 +16,6 @@ const navLinks = [
   { href: '/crowd-hotspots', label: 'Chart Analysis', icon: ImageIcon },
   { href: '/path-prediction', label: 'Path Prediction', icon: Footprints },
   { href: '/analytics', label: 'Analytics', icon: LineChart },
-  { href: '/map-analysis', label: 'Map Analysis', icon: Map },
   { href: '/lost-and-found', label: 'Lost and Found', icon: UserSearch },
 ]
 
