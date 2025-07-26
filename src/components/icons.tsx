@@ -12,8 +12,11 @@ export const Icons = {
           <stop offset="0%" style={{stopColor: '#34A853'}} />
           <stop offset="100%" style={{stopColor: '#FBBC05'}} />
         </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="4" dy="4" stdDeviation="5" floodColor="#000" floodOpacity="0.2" />
+        </filter>
       </defs>
-      <g>
+      <g filter="url(#shadow)">
         <path 
             d="M24.5,128C24.5,128,60,65,128,65s103.5,63,103.5,63-35.5,63-103.5,63S24.5,128,24.5,128Z" 
             fill="url(#eye-gradient)"
@@ -27,6 +30,7 @@ export const Icons = {
             fill="#EA4335"
         />
         <circle cx="128" cy="128" r="32" fill="white"/>
+        <circle cx="128" cy="128" r="16" fill="#4285F4"/>
       </g>
     </svg>
   ),
