@@ -61,6 +61,9 @@ export default function Dashboard() {
                  <AlertsPanel />
               </div>
             </div>
+            <footer className="w-full py-4 text-center text-xs text-muted-foreground">
+                Made with ❤️ by Team Mingw64
+            </footer>
         </main>
       </div>
     </div>
