@@ -1,3 +1,4 @@
+
 'use client'
 
 import Link from 'next/link'
@@ -7,6 +8,7 @@ import { Home, LineChart, ImageIcon, Map, Footprints, UserSearch, Video, AlertTr
 import { Icons } from '@/components/icons'
 import { cn } from '@/lib/utils'
 import { Button } from './ui/button'
+import { useToast } from '@/hooks/use-toast'
 
 const navLinks = [
   { href: '/', label: 'Dashboard', icon: Home },
@@ -24,6 +26,36 @@ interface SidebarProps {
 
 export function Sidebar({ isSheet = false }: SidebarProps) {
   const pathname = usePathname()
+  const { toast } = useToast()
+
+  const handleSosClick = async () => {
+    try {
+      const response = await fetch('https://us-central1-avid-ceiling-466717-i9.cloudfunctions.net/alerts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: '🔥 Fire in Block C! Please Evacuate!' }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'SOS Alert Sent!',
+          description: 'Emergency services have been notified.',
+        });
+      } else {
+        throw new Error('Failed to send SOS alert');
+      }
+    } catch (error) {
+      console.error('SOS request failed', error);
+      toast({
+        variant: 'destructive',
+        title: 'SOS Failed',
+        description: 'An error occurred while sending the alert.',
+      });
+    }
+  };
+
 
   const commonLinkClasses = "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
   const activeLinkClasses = "bg-accent text-accent-foreground hover:text-foreground";
@@ -60,7 +92,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
         </Link>
         {navLinks.map(renderLink)}
          <div className="mt-auto">
-            <Button variant="destructive" className="w-full text-lg font-bold">
+            <Button onClick={handleSosClick} variant="destructive" className="w-full text-lg font-bold">
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 SOS
             </Button>
@@ -89,7 +121,7 @@ export function Sidebar({ isSheet = false }: SidebarProps) {
             </div>
         </nav>
         <div className="mt-auto p-4">
-             <Button variant="destructive" className="w-full text-lg font-bold">
+             <Button onClick={handleSosClick} variant="destructive" className="w-full text-lg font-bold">
                 <AlertTriangle className="mr-2 h-4 w-4" />
                 SOS
             </Button>
