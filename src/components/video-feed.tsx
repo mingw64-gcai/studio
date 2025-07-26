@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -10,11 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { generateHeatmapOverlay } from '@/ai/flows/generate-heatmap-overlay';
 import { countFacesInImage } from '@/ai/flows/count-faces-in-image';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import type { ThreatLevel } from '@/app/page';
@@ -26,9 +21,6 @@ interface VideoFeedProps {
 
 export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
   const { toast } = useToast();
-  const [showHeatmap, setShowHeatmap] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [heatmapUrl, setHeatmapUrl] = useState<string | null>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const analysisIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -110,48 +102,6 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
     }
   }, [hasCameraPermission, analyzeFrame]);
 
-
-  const handleHeatmapToggle = async (checked: boolean) => {
-    setShowHeatmap(checked);
-    if (checked) {
-      if (!videoRef.current) return;
-
-      setIsLoading(true);
-      setHeatmapUrl(null);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        setIsLoading(false);
-        return;
-      }
-      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-      const videoDataUri = canvas.toDataURL('image/png');
-
-      try {
-        const result = await generateHeatmapOverlay({
-          videoDataUri,
-          keywords: 'high density areas, crowd congestion',
-        });
-        setHeatmapUrl(result.heatmapOverlayDataUri);
-      } catch (error) {
-        console.error('Failed to generate heatmap', error);
-        toast({
-          variant: 'destructive',
-          title: 'Error',
-          description: 'Could not generate heatmap overlay.',
-        });
-        setShowHeatmap(false);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
-      setHeatmapUrl(null);
-    }
-  };
-
   return (
     <Card className="border-4 border-[hsl(var(--chart-3))]">
       <CardHeader>
@@ -159,16 +109,6 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
           <div>
             <CardTitle>Live Video Feed</CardTitle>
             <CardDescription>Central square monitoring</CardDescription>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="heatmap-toggle"
-              checked={showHeatmap}
-              onCheckedChange={handleHeatmapToggle}
-              disabled={isLoading || !hasCameraPermission}
-              aria-label="Toggle heatmap"
-            />
-            <Label htmlFor="heatmap-toggle">Show Heatmap</Label>
           </div>
         </div>
       </CardHeader>
@@ -184,19 +124,6 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
                       </AlertDescription>
                     </Alert>
                 </div>
-            )}
-            {heatmapUrl && (
-              <Image
-                src={heatmapUrl}
-                alt="Heatmap overlay"
-                fill
-                className="pointer-events-none object-contain opacity-70"
-              />
-            )}
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-background/80">
-                <Loader2 className="h-8 w-8 animate-spin" />
-              </div>
             )}
         </div>
       </CardContent>
