@@ -1,0 +1,19 @@
+# Flask API Requirements
+Flask==2.3.3
+Flask-CORS==4.0.0
+Werkzeug==2.3.7
+
+# Core crowd analysis dependencies  
+opencv-python==4.5.4.58
+numpy==1.19.5
+imutils==0.5.4
+scipy==1.5.4
+matplotlib==3.3.4
+pandas==1.1.5
+
+# Deep learning
+tensorflow==2.6.2
+
+# Additional utilities
+Pillow==8.4.0
+requests==2.26.0 
