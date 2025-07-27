@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 
 type Screen = 'upload' | 'scanning' | 'result';
 
-const foundPeople = [
+const initialFoundPeople = [
     {
       name: 'John Doe',
       location: 'Found near Main Stage',
@@ -47,6 +47,7 @@ export default function LostAndFoundPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [screen, setScreen] = useState<Screen>('upload');
   const [result, setResult] = useState<{text: string, found: boolean} | null>(null);
+  const [foundPeople, setFoundPeople] = useState(initialFoundPeople);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +98,18 @@ export default function LostAndFoundPage() {
             text: data.text,
             found: data.found, 
         });
+
+        if (data.found && data.name) {
+            const newPerson = {
+                name: data.name,
+                location: "Located via Live Search",
+                time: "Just now",
+                image: personImage,
+                hint: "person found"
+            };
+            setFoundPeople(prev => [newPerson, ...prev]);
+        }
+
         setScreen('result');
 
       } catch (error: any) {
