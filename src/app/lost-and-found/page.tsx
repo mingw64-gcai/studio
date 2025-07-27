@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search, Bell } from 'lucide-react';
+import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search, Bell, Trash2 } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
@@ -94,12 +94,14 @@ export default function LostAndFoundPage() {
             throw new Error(data.error || `API request failed with status ${response.status}`);
         }
         
+        const isFound = !!data.name;
+
         setResult({
-            text: data.text,
-            found: data.found,
+            text: isFound ? `We have located a person matching the image: ${data.name.replace(/_/g, ' ')}.` : "Person not found.",
+            found: isFound,
         });
 
-        if (data.found && data.name) {
+        if (isFound) {
             const newPerson = {
                 name: data.name.replace(/_/g, ' '), // Replace underscores with spaces for display
                 location: "Located via Live Search",
@@ -249,6 +251,14 @@ export default function LostAndFoundPage() {
     });
   }
 
+  const handleClearFound = () => {
+    setFoundPeople([]);
+    toast({
+      title: 'List Cleared',
+      description: 'The "Recently Found" list has been cleared.',
+    });
+  };
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <Sidebar />
@@ -275,30 +285,46 @@ export default function LostAndFoundPage() {
                    {renderScreen()}
                    <Card className="border-t-8 border-t-[hsl(var(--chart-4))]">
                         <CardHeader>
-                            <CardTitle>Recently Found</CardTitle>
-                            <CardDescription>Individuals who have been recently located.</CardDescription>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <CardTitle>Recently Found</CardTitle>
+                                    <CardDescription>Individuals who have been recently located.</CardDescription>
+                                </div>
+                                <Button variant="outline" size="sm" onClick={handleClearFound}>
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Clear All
+                                </Button>
+                            </div>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {foundPeople.map((person, index) => (
-                                <div key={index} className="space-y-4">
-                                    <div className="flex items-center gap-4">
-                                        <Avatar className="h-16 w-16 border">
-                                            <AvatarImage src={person.image} alt={person.name} data-ai-hint={person.hint} />
-                                            <AvatarFallback>{person.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <p className="font-semibold">{person.name}</p>
-                                            <p className="text-sm text-muted-foreground">{person.location}</p>
-                                            <p className="text-xs text-muted-foreground">{person.time}</p>
+                            {foundPeople.length > 0 ? (
+                                foundPeople.map((person, index) => (
+                                    <div key={index} className="space-y-4">
+                                        <div className="flex items-center gap-4">
+                                            <Avatar className="h-16 w-16 border">
+                                                <AvatarImage src={person.image} alt={person.name} data-ai-hint={person.hint} />
+                                                <AvatarFallback>{person.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex-1">
+                                                <p className="font-semibold">{person.name}</p>
+                                                <p className="text-sm text-muted-foreground">{person.location}</p>
+                                                <p className="text-xs text-muted-foreground">{person.time}</p>
+                                            </div>
+                                            <Button variant="outline" size="sm" onClick={handleReport}>
+                                                <Bell className="mr-2 h-4 w-4" />
+                                                Report
+                                            </Button>
                                         </div>
-                                        <Button variant="outline" size="sm" onClick={handleReport}>
-                                            <Bell className="mr-2 h-4 w-4" />
-                                            Report
-                                        </Button>
+                                        {index < foundPeople.length -1 && <Separator />}
                                     </div>
-                                    {index < foundPeople.length -1 && <Separator />}
+                                ))
+                            ) : (
+                                <div className="flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+                                    <UserSearch className="h-12 w-12 mb-4" />
+                                    <p className="font-semibold">No one has been found recently.</p>
+                                    <p className="text-sm">Search results will appear here.</p>
                                 </div>
-                            ))}
+                            )}
                         </CardContent>
                    </Card>
                 </div>
@@ -308,3 +334,4 @@ export default function LostAndFoundPage() {
   );
 }
  
+
