@@ -96,7 +96,7 @@ export default function LostAndFoundPage() {
         
         setResult({
             text: data.text,
-            found: data.found, 
+            found: !!data.name,
         });
 
         if (data.found && data.name) {
