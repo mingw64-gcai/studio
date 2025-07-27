@@ -33,7 +33,11 @@ export async function POST(request: Request) {
 
     const data = await externalApiResponse.json();
     
-    return NextResponse.json(data);
+    // Assuming the API response contains `image` and `found` fields
+    return NextResponse.json({
+        image: data.image, // base64 encoded image
+        found: data.found,
+    });
 
   } catch (error) {
     console.error('API Route Error:', error);

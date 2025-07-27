@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search, Video } from 'lucide-react';
+import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
@@ -20,7 +20,7 @@ export default function LostAndFoundPage() {
   const [personImage, setPersonImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [screen, setScreen] = useState<Screen>('upload');
-  const [result, setResult] = useState<{videoResultDataUri: string, found: boolean} | null>(null);
+  const [result, setResult] = useState<{imageResultDataUri: string, found: boolean} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,10 +67,10 @@ export default function LostAndFoundPage() {
             throw new Error(data.error || `API request failed with status ${response.status}`);
         }
         
-        const videoDataUri = `data:video/mp4;base64,${data.video}`;
+        const imageDataUri = `data:image/jpeg;base64,${data.image}`;
         
         setResult({
-            videoResultDataUri: videoDataUri,
+            imageResultDataUri: imageDataUri,
             found: data.found, 
         });
         setScreen('result');
@@ -142,14 +142,14 @@ export default function LostAndFoundPage() {
   const renderScanningScreen = () => (
       <Card>
           <CardHeader>
-              <CardTitle>Scanning Video Feed</CardTitle>
-              <CardDescription>Our AI is analyzing the live feed to find the person. Please wait.</CardDescription>
+              <CardTitle>Scanning for Person</CardTitle>
+              <CardDescription>Our AI is analyzing the image to find the person. Please wait.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
               <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
                   <Image
                     src="https://placehold.co/1280x720"
-                    alt="Live video feed"
+                    alt="Scanning placeholder"
                     fill
                     className="object-cover"
                     data-ai-hint="crowd event"
@@ -176,18 +176,18 @@ export default function LostAndFoundPage() {
                            <Sparkles className="h-4 w-4 !text-green-800" />
                            <AlertTitle>Person Found!</AlertTitle>
                            <AlertDescription>
-                               The individual has been located in the video feed.
+                               The individual has been located.
                            </AlertDescription>
                         </Alert>
                        <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                           <video src={result.videoResultDataUri} autoPlay loop muted controls className="w-full h-full object-contain" />
+                           <Image src={result.imageResultDataUri} alt="Found person result" fill style={{objectFit: 'contain'}} />
                        </div>
                    </div>
               ) : (
                 <Alert variant="destructive">
                     <AlertTitle>Person Not Found</AlertTitle>
                     <AlertDescription>
-                        We could not locate the person in the current video feed. You can try again.
+                        We could not locate the person in our search. You can try again with a different image.
                     </AlertDescription>
                 </Alert>
               )}
