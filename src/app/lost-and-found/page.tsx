@@ -20,7 +20,7 @@ export default function LostAndFoundPage() {
   const [personImage, setPersonImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [screen, setScreen] = useState<Screen>('upload');
-  const [result, setResult] = useState<{imageResultDataUri: string, found: boolean} | null>(null);
+  const [result, setResult] = useState<{text: string, found: boolean} | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,10 +67,8 @@ export default function LostAndFoundPage() {
             throw new Error(data.error || `API request failed with status ${response.status}`);
         }
         
-        const imageDataUri = `data:image/jpeg;base64,${data.image}`;
-        
         setResult({
-            imageResultDataUri: imageDataUri,
+            text: data.text,
             found: data.found, 
         });
         setScreen('result');
@@ -176,12 +174,9 @@ export default function LostAndFoundPage() {
                            <Sparkles className="h-4 w-4 !text-green-800" />
                            <AlertTitle>Person Found!</AlertTitle>
                            <AlertDescription>
-                               The individual has been located.
+                               {result.text}
                            </AlertDescription>
                         </Alert>
-                       <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                           <Image src={result.imageResultDataUri} alt="Found person result" fill style={{objectFit: 'contain'}} />
-                       </div>
                    </div>
               ) : (
                 <Alert variant="destructive">

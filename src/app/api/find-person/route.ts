@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Image data is required' }, { status: 400 });
     }
 
-    const externalApiResponse = await fetch('https://b63a0424eb28.ngrok-free.app/predict', {
+    const externalApiResponse = await fetch('https://e7ccebc96373.ngrok-free.app/predict', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,9 +33,9 @@ export async function POST(request: Request) {
 
     const data = await externalApiResponse.json();
     
-    // Assuming the API response contains `image` and `found` fields
+    // Assuming the API response contains `text` and `found` fields
     return NextResponse.json({
-        image: data.image, // base64 encoded image
+        text: data.text,
         found: data.found,
     });
 
