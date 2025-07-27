@@ -10,7 +10,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Image data is required' }, { status: 400 });
     }
 
-    const externalApiResponse = await fetch('https://9198f9552d6a.ngrok-free.app/predict', {
+    const externalApiResponse = await fetch('https://b63a0424eb28.ngrok-free.app/predict', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
