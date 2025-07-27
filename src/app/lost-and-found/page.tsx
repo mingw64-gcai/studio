@@ -60,11 +60,12 @@ export default function LostAndFoundPage() {
             }),
         });
 
-        if (!response.ok) {
-            throw new Error(`API request failed with status ${response.status}`);
-        }
-        
         const data = await response.json();
+
+        if (!response.ok) {
+            // Use the error message from the API response if available
+            throw new Error(data.error || `API request failed with status ${response.status}`);
+        }
         
         const videoDataUri = `data:video/mp4;base64,${data.video}`;
         
@@ -74,12 +75,12 @@ export default function LostAndFoundPage() {
         });
         setScreen('result');
 
-      } catch (error) {
+      } catch (error: any) {
           console.error('Failed to find person', error);
           toast({
               variant: 'destructive',
               title: 'Search Failed',
-              description: 'There was an error during the search process.',
+              description: error.message || 'An unknown error occurred during the search.',
           });
           setScreen('upload');
       }

@@ -21,8 +21,12 @@ export async function POST(request: Request) {
     if (!externalApiResponse.ok) {
       const errorBody = await externalApiResponse.text();
       console.error('External API Error:', errorBody);
+      // Pass the specific error and status from the external API to the client
       return NextResponse.json(
-        { error: `External API failed with status ${externalApiResponse.status}` },
+        { 
+          error: `The external service is currently unavailable. Please try again later.`,
+          details: errorBody,
+        },
         { status: externalApiResponse.status }
       );
     }
@@ -33,6 +37,6 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('API Route Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error while contacting the prediction service.' }, { status: 500 });
   }
 }
