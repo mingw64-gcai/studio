@@ -140,7 +140,7 @@ export default function LostAndFoundPage() {
   }
 
   const renderUploadScreen = () => (
-    <Card>
+    <Card className="border-t-8 border-t-destructive">
         <CardHeader>
             <CardTitle>Find a Person</CardTitle>
             <CardDescription>Upload a photo of the person you are looking for.</CardDescription>
@@ -334,4 +334,5 @@ export default function LostAndFoundPage() {
   );
 }
  
+
 
