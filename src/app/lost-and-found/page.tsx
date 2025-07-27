@@ -11,7 +11,6 @@ import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search, Video } from 
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { findPersonInCrowd } from '@/ai/flows/find-person-in-crowd';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 type Screen = 'upload' | 'scanning' | 'result';
@@ -49,25 +48,48 @@ export default function LostAndFoundPage() {
     setIsLoading(true);
     setScreen('scanning');
     
-    try {
-        // This is where you would call your backend.
-        // For now, we use the placeholder flow.
-        const fakeVideoDataUri = "data:video/mp4;base64,..."; // In a real app, this would be the live feed.
-        const response = await findPersonInCrowd({ personImageDataUri: personImage, videoDataUri: fakeVideoDataUri });
-        setResult(response);
-        setScreen('result');
-    } catch (error) {
-        console.error('Failed to find person', error);
-        toast({
-            variant: 'destructive',
-            title: 'Search Failed',
-            description: 'There was an error during the search process.',
+    setTimeout(async () => {
+      try {
+        const response = await fetch('https://9198f9552d6a.ngrok-free.app/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                // The API expects the image without the data URI prefix
+                image: personImage.split(',')[1],
+            }),
         });
-        setScreen('upload');
-    }
-    finally {
-        setIsLoading(false);
-    }
+
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Assuming the API returns a base64 encoded video and a found status
+        // and that the video needs the data URI prefix to be playable.
+        const videoDataUri = `data:video/mp4;base64,${data.video}`;
+        
+        setResult({
+            videoResultDataUri: videoDataUri,
+            found: data.found, // Assuming the API returns a boolean `found` field
+        });
+        setScreen('result');
+
+      } catch (error) {
+          console.error('Failed to find person', error);
+          toast({
+              variant: 'destructive',
+              title: 'Search Failed',
+              description: 'There was an error during the search process.',
+          });
+          setScreen('upload');
+      }
+      finally {
+          setIsLoading(false);
+      }
+    }, 7000); // 7-second delay
   };
 
   const handleUploadClick = () => {
@@ -160,7 +182,7 @@ export default function LostAndFoundPage() {
                            </AlertDescription>
                         </Alert>
                        <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
-                           <video src={result.videoResultDataUri} autoPlay loop muted className="w-full h-full object-contain" />
+                           <video src={result.videoResultDataUri} autoPlay loop muted controls className="w-full h-full object-contain" />
                        </div>
                    </div>
               ) : (
@@ -218,3 +240,5 @@ export default function LostAndFoundPage() {
     </div>
   );
 }
+
+    
