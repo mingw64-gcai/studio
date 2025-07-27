@@ -50,13 +50,12 @@ export default function LostAndFoundPage() {
     
     setTimeout(async () => {
       try {
-        const response = await fetch('https://9198f9552d6a.ngrok-free.app/predict', {
+        const response = await fetch('/api/find-person', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                // The API expects the image without the data URI prefix
                 image: personImage.split(',')[1],
             }),
         });
@@ -67,13 +66,11 @@ export default function LostAndFoundPage() {
         
         const data = await response.json();
         
-        // Assuming the API returns a base64 encoded video and a found status
-        // and that the video needs the data URI prefix to be playable.
         const videoDataUri = `data:video/mp4;base64,${data.video}`;
         
         setResult({
             videoResultDataUri: videoDataUri,
-            found: data.found, // Assuming the API returns a boolean `found` field
+            found: data.found, 
         });
         setScreen('result');
 
@@ -89,7 +86,7 @@ export default function LostAndFoundPage() {
       finally {
           setIsLoading(false);
       }
-    }, 7000); // 7-second delay
+    }, 7000);
   };
 
   const handleUploadClick = () => {
@@ -240,5 +237,3 @@ export default function LostAndFoundPage() {
     </div>
   );
 }
-
-    
