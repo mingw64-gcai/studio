@@ -179,7 +179,7 @@ export default function LostAndFoundPage() {
   );
 
   const renderScanningScreen = () => (
-      <Card>
+      <Card className="border-t-8 border-t-destructive">
           <CardHeader>
               <CardTitle>Scanning for Person</CardTitle>
               <CardDescription>Our AI is analyzing the image to find the person. Please wait.</CardDescription>
@@ -203,7 +203,7 @@ export default function LostAndFoundPage() {
   );
 
   const renderResultScreen = () => (
-      <Card>
+      <Card className="border-t-8 border-t-destructive">
           <CardHeader>
               <CardTitle>Search Results</CardTitle>
               <CardDescription>The scan has completed.</CardDescription>
@@ -323,3 +323,5 @@ export default function LostAndFoundPage() {
   );
 }
  
+
+    
