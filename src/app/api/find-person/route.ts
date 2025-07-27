@@ -33,10 +33,14 @@ export async function POST(request: Request) {
 
     const data = await externalApiResponse.json();
     
-    // Assuming the API response contains `text` and `found` fields
+    // The external API returns 'predict' for the name.
+    const personName = data.predict;
+    const isFound = !!personName;
+
     return NextResponse.json({
-        text: data.text,
-        found: data.found,
+        text: isFound ? `We have located a person matching the image: ${personName}.` : "Person not found.",
+        found: isFound,
+        name: personName,
     });
 
   } catch (error) {

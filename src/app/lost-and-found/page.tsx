@@ -96,12 +96,12 @@ export default function LostAndFoundPage() {
         
         setResult({
             text: data.text,
-            found: !!data.name,
+            found: data.found,
         });
 
         if (data.found && data.name) {
             const newPerson = {
-                name: data.name,
+                name: data.name.replace(/_/g, ' '), // Replace underscores with spaces for display
                 location: "Located via Live Search",
                 time: "Just now",
                 image: personImage,
@@ -221,7 +221,7 @@ export default function LostAndFoundPage() {
                 <Alert variant="destructive">
                     <AlertTitle>Person Not Found</AlertTitle>
                     <AlertDescription>
-                        We could not locate the person in our search. You can try again with a different image.
+                        {result?.text || "We could not locate the person in our search. You can try again with a different image."}
                     </AlertDescription>
                 </Alert>
               )}
