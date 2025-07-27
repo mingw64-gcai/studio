@@ -7,13 +7,39 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search } from 'lucide-react';
+import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search, Bell } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 
 type Screen = 'upload' | 'scanning' | 'result';
+
+const foundPeople = [
+    {
+      name: 'John Doe',
+      location: 'Found near Main Stage',
+      time: '10 mins ago',
+      image: 'https://placehold.co/100x100.png',
+      hint: 'man portrait',
+    },
+    {
+      name: 'Jane Smith',
+      location: 'Located at West Entrance',
+      time: '25 mins ago',
+      image: 'https://placehold.co/100x100.png',
+      hint: 'woman portrait',
+    },
+    {
+      name: 'Peter Jones',
+      location: 'Identified near Food Court',
+      time: '45 mins ago',
+      image: 'https://placehold.co/100x100.png',
+      hint: 'man smiling',
+    },
+];
 
 export default function LostAndFoundPage() {
   const { toast } = useToast();
@@ -146,7 +172,7 @@ export default function LostAndFoundPage() {
           <CardContent className="space-y-4">
               <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
                   <Image
-                    src="https://placehold.co/1280x720"
+                    src="https://placehold.co/1280x720.png"
                     alt="Scanning placeholder"
                     fill
                     className="object-cover"
@@ -203,6 +229,13 @@ export default function LostAndFoundPage() {
     }
   }
 
+  const handleReport = () => {
+    toast({
+        title: 'Feature Coming Soon',
+        description: 'Reporting functionality will be available in a future update.',
+    });
+  }
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
         <Sidebar />
@@ -225,8 +258,36 @@ export default function LostAndFoundPage() {
                 <UserNav />
             </header>
             <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">
-                <div className="grid gap-4 md:grid-cols-1">
+                <div className="grid gap-4 md:grid-cols-2">
                    {renderScreen()}
+                   <Card className="border-t-8 border-t-[hsl(var(--chart-4))]">
+                        <CardHeader>
+                            <CardTitle>Recently Found</CardTitle>
+                            <CardDescription>Individuals who have been recently located.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {foundPeople.map((person, index) => (
+                                <div key={index} className="space-y-4">
+                                    <div className="flex items-center gap-4">
+                                        <Avatar className="h-16 w-16 border">
+                                            <AvatarImage src={person.image} alt={person.name} data-ai-hint={person.hint} />
+                                            <AvatarFallback>{person.name.charAt(0)}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1">
+                                            <p className="font-semibold">{person.name}</p>
+                                            <p className="text-sm text-muted-foreground">{person.location}</p>
+                                            <p className="text-xs text-muted-foreground">{person.time}</p>
+                                        </div>
+                                        <Button variant="outline" size="sm" onClick={handleReport}>
+                                            <Bell className="mr-2 h-4 w-4" />
+                                            Report
+                                        </Button>
+                                    </div>
+                                    {index < foundPeople.length -1 && <Separator />}
+                                </div>
+                            ))}
+                        </CardContent>
+                   </Card>
                 </div>
             </main>
         </div>
