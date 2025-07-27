@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search, Bell, Trash2 } from 'lucide-react';
+import { Upload, Loader2, Sparkles, UserSearch, PanelLeft, Search, Trash2 } from 'lucide-react';
 import { UserNav } from '@/components/user-nav';
 import { Sidebar } from '@/components/sidebar';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
@@ -244,13 +244,6 @@ export default function LostAndFoundPage() {
     }
   }
 
-  const handleReport = () => {
-    toast({
-        title: 'Feature Coming Soon',
-        description: 'Reporting functionality will be available in a future update.',
-    });
-  }
-
   const handleClearFound = () => {
     setFoundPeople([]);
     toast({
@@ -310,10 +303,6 @@ export default function LostAndFoundPage() {
                                                 <p className="text-sm text-muted-foreground">{person.location}</p>
                                                 <p className="text-xs text-muted-foreground">{person.time}</p>
                                             </div>
-                                            <Button variant="outline" size="sm" onClick={handleReport}>
-                                                <Bell className="mr-2 h-4 w-4" />
-                                                Report
-                                            </Button>
                                         </div>
                                         {index < foundPeople.length -1 && <Separator />}
                                     </div>
@@ -334,5 +323,3 @@ export default function LostAndFoundPage() {
   );
 }
  
-
-
