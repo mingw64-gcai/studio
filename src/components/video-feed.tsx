@@ -27,7 +27,7 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
   const analysisIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const analyzeFrame = useCallback(async () => {
-    if (!videoRef.current || videoRef.current.paused || videoRef.current.ended) {
+    if (!videoRef.current || videoRef.current.paused || videoRef.current.ended || videoRef.current.videoWidth === 0) {
       return;
     }
 
@@ -58,9 +58,11 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
   }, [setThreatLevel, setFaceCount]);
 
   useEffect(() => {
+    let stream: MediaStream | null = null;
+    
     const getCameraPermission = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
         setHasCameraPermission(true);
 
         if (videoRef.current) {
@@ -78,6 +80,13 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
     };
 
     getCameraPermission();
+
+    // Cleanup function to stop the camera stream when component unmounts
+    return () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    }
   }, [toast]);
   
   useEffect(() => {
@@ -91,12 +100,8 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
         analysisIntervalRef.current = setInterval(analyzeFrame, 5000); // Analyze every 5 seconds
     }
     
-    // Cleanup function
+    // Cleanup interval on unmount
     return () => {
-        if (videoRef.current && videoRef.current.srcObject) {
-            const stream = videoRef.current.srcObject as MediaStream;
-            stream.getTracks().forEach(track => track.stop());
-        }
         if (analysisIntervalRef.current) {
             clearInterval(analysisIntervalRef.current);
         }
@@ -130,6 +135,11 @@ export function VideoFeed({ setThreatLevel, setFaceCount }: VideoFeedProps) {
                       </AlertDescription>
                      </Alert>
                 </div>
+            )}
+            {hasCameraPermission === null && (
+                 <div className="absolute inset-0 flex items-center justify-center p-4">
+                    <p>Requesting camera access...</p>
+                 </div>
             )}
         </div>
       </CardContent>
